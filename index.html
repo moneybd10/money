@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Money Game Bd</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter','Hind Siliguri',sans-serif; -webkit-tap-highlight-color:transparent; }
+  :root {
+    --primary:#e2136e; --primary-dark:#b30d55; --primary-light:#ff4d94;
+    --nagad:#ec1c24; --nagad-dark:#c0141b;
+    --bg:#f5f6fa; --card:#fff; --text:#1a1a1a; --muted:#777;
+    --success:#16a34a; --warning:#f59e0b; --danger:#dc2626;
+    --blue:#2563eb; --purple:#7c3aed; --teal:#0d9488; --telegram:#229ED9;
+    --gold:#f59e0b; --gold-dark:#d97706;
+    --grad-primary:linear-gradient(135deg,#e2136e 0%,#b30d55 100%);
+    --grad-gold:linear-gradient(135deg,#fbbf24 0%,#d97706 100%);
+  }
+  html, body { overflow-x:hidden; }
+  body { background:var(--bg); color:var(--text); padding-bottom:76px; }
+
+  .app-header { position:fixed; top:0; left:0; right:0; z-index:150; background:linear-gradient(135deg,#be123c 0%,#9f1239 50%,#881337 100%); color:#fff; padding:8px 12px; display:flex; align-items:center; justify-content:space-between; gap:6px; box-shadow:0 3px 14px rgba(190,18,60,0.35); overflow:hidden; height:50px; }
+  .app-header::before { content:''; position:absolute; top:-60%; right:-20%; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle,rgba(255,255,255,0.12),transparent 70%); pointer-events:none; }
+  .brand { display:flex; align-items:center; gap:6px; position:relative; z-index:2; }
+  .brand-logo { width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg,#fff,#fce7f3); display:flex; align-items:center; justify-content:center; font-size:15px; box-shadow:0 2px 8px rgba(0,0,0,0.2); }
+  .brand-text { display:flex; flex-direction:column; line-height:1; }
+  .brand-text .name { font-size:13px; font-weight:900; letter-spacing:0.2px; }
+  .brand-text .tag { font-size:7px; font-weight:700; opacity:0.85; letter-spacing:0.8px; text-transform:uppercase; }
+  .header-actions { display:flex; align-items:center; gap:5px; position:relative; z-index:2; }
+  .vip-chip { background:var(--grad-gold); color:#fff; font-size:7px; font-weight:900; padding:3px 6px; border-radius:16px; letter-spacing:0.4px; white-space:nowrap; display:inline-flex; align-items:center; gap:2px; border:1px solid rgba(255,255,255,0.4); text-transform:uppercase; }
+  .tg-icon-btn { width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg,#229ED9,#1e8abf); color:#fff; text-decoration:none; border:none; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 8px rgba(34,158,217,0.4); }
+  .tg-icon-btn svg { width:14px; height:14px; fill:currentColor; }
+  .bal-pill { background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.3); backdrop-filter:blur(10px); padding:5px 9px; border-radius:14px; font-size:10px; font-weight:800; color:#fff; display:flex; align-items:center; gap:3px; cursor:pointer; font-family:inherit; }
+
+  .overlay { position:fixed; inset:0; background:rgba(0,0,0,0.55); backdrop-filter:blur(8px); z-index:200; opacity:0; visibility:hidden; transition:opacity 0.35s ease, visibility 0.35s ease; }
+  .overlay.active { opacity:1; visibility:visible; }
+  .sidenav { position:fixed; top:0; left:-100%; width:280px; height:100%; background:linear-gradient(160deg, rgba(255,255,255,0.96) 0%, rgba(255,240,245,0.94) 50%, rgba(243,232,255,0.95) 100%); backdrop-filter:blur(30px) saturate(180%); z-index:300; transition:left 0.4s cubic-bezier(0.4,0,0.2,1); overflow-y:auto; border-right:1.5px solid rgba(255,255,255,0.7); box-shadow:8px 0 50px rgba(226,19,110,0.25); will-change:left; }
+  .sidenav.active { left:0; }
+  .sidenav::-webkit-scrollbar { width:3px; }
+  .sidenav::-webkit-scrollbar-thumb { background:rgba(226,19,110,0.3); border-radius:10px; }
+  .sidenav-header { background:linear-gradient(135deg, rgba(190,18,60,0.96) 0%, rgba(159,18,57,0.94) 50%, rgba(136,19,55,0.96) 100%); backdrop-filter:blur(20px); color:#fff; padding:16px 14px 18px; position:relative; overflow:hidden; border-bottom:1.5px solid rgba(255,255,255,0.2); box-shadow:0 4px 20px rgba(0,0,0,0.15); display:flex; flex-direction:column; align-items:center; text-align:center; }
+  .sidenav-header::before { content:''; position:absolute; top:-40px; right:-40px; width:120px; height:120px; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.25), transparent 70%); }
+  .sidenav-header::after { content:''; position:absolute; bottom:-50px; left:-30px; width:100px; height:100px; border-radius:50%; background:radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%); }
+  .back-btn { position:absolute; top:12px; left:12px; background:linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.18)); backdrop-filter:blur(10px); border:1.5px solid rgba(255,255,255,0.5); color:#fff; padding:6px 12px 6px 28px; border-radius:20px; font-size:9px; font-weight:900; cursor:pointer; display:inline-flex; align-items:center; gap:4px; z-index:5; transition:all 0.25s; font-family:inherit; text-transform:uppercase; letter-spacing:0.5px; box-shadow:0 3px 12px rgba(0,0,0,0.25); }
+  .back-btn::before { content:'‹'; position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:18px; font-weight:900; line-height:1; }
+  .back-btn:hover { background:linear-gradient(135deg, rgba(255,255,255,0.45), rgba(255,255,255,0.28)); transform:translateX(-2px); }
+  .sidenav-avatar { width:80px; height:80px; border-radius:50%; border:3px solid rgba(255,255,255,0.75); overflow:hidden; background:linear-gradient(135deg,#fce7f3,#fbcfe8); display:flex; align-items:center; justify-content:center; font-size:34px; box-shadow:0 8px 24px rgba(0,0,0,0.4); position:relative; z-index:2; margin-bottom:10px; animation:avatarGlow 3s ease-in-out infinite; }
+  @keyframes avatarGlow { 0%,100% { box-shadow:0 8px 24px rgba(0,0,0,0.4), 0 0 0 0 rgba(251,191,36,0.4); } 50% { box-shadow:0 8px 24px rgba(0,0,0,0.4), 0 0 0 8px rgba(251,191,36,0.15); } }
+  .sidenav-avatar img { width:100%; height:100%; object-fit:cover; }
+  .sidenav-avatar.guest { background:linear-gradient(135deg,#dbeafe,#bfdbfe); }
+  .sidenav-tg-wrap { position:absolute; top:12px; right:12px; display:flex; flex-direction:column; align-items:center; gap:3px; z-index:5; }
+  .sidenav-tg-btn { width:38px; height:38px; border-radius:11px; background:linear-gradient(135deg,#229ED9,#1e8abf); color:#fff; text-decoration:none; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(34,158,217,0.55); }
+  .sidenav-tg-btn svg { width:18px; height:18px; fill:currentColor; }
+  .sidenav-tg-label { font-size:6px; font-weight:900; padding:2px 6px; border-radius:16px; background:linear-gradient(135deg,#fbbf24,#d97706); color:#fff; white-space:nowrap; letter-spacing:0.4px; text-transform:uppercase; }
+  .sidenav-info { position:relative; z-index:2; }
+  .sidenav-header h2 { font-size:14px; margin-bottom:3px; font-weight:900; text-transform:uppercase; letter-spacing:0.5px; }
+  .sidenav-header p { font-size:10px; opacity:0.92; font-weight:600; }
+  .menu-section-title { padding:12px 16px 4px; font-size:9px; text-transform:uppercase; letter-spacing:1.3px; color:#b91c1c; font-weight:900; display:flex; align-items:center; gap:6px; }
+  .menu-section-title::after { content:''; flex:1; height:1px; background:linear-gradient(90deg, rgba(226,19,110,0.3), transparent); }
+  .menu-list { padding:6px 10px 18px; display:flex; flex-direction:column; gap:6px; }
+  .menu-card { background:linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.65)); backdrop-filter:blur(15px); border-radius:12px; padding:9px 11px; display:flex; align-items:center; gap:10px; cursor:pointer; transition:all 0.3s; box-shadow:0 2px 10px rgba(0,0,0,0.06); border:1.5px solid rgba(255,255,255,0.7); font-family:inherit; text-align:left; width:100%; }
+  .menu-card:hover { transform:translateX(4px); border-color:rgba(226,19,110,0.35); }
+  .menu-card .m-icon { width:32px; height:32px; border-radius:9px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .menu-card .m-icon svg { width:16px; height:16px; }
+  .menu-card .m-text { display:flex; flex-direction:column; gap:0; flex:1; }
+  .menu-card .m-title { font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:0.4px; }
+  .menu-card .m-sub { font-size:8.5px; color:var(--muted); font-weight:600; text-transform:uppercase; }
+  .menu-card .m-arrow { color:#cbd5e1; font-size:14px; font-weight:700; }
+  .m-pink .m-icon { background:linear-gradient(135deg,#fce7f3,#fbcfe8); color:var(--primary); }
+  .m-blue .m-icon { background:linear-gradient(135deg,#dbeafe,#bfdbfe); color:var(--blue); }
+  .m-yellow .m-icon { background:linear-gradient(135deg,#fef3c7,#fde68a); color:#b45309; }
+  .m-green .m-icon { background:linear-gradient(135deg,#dcfce7,#bbf7d0); color:var(--success); }
+  .m-purple .m-icon { background:linear-gradient(135deg,#f3e8ff,#e9d5ff); color:var(--purple); }
+  .m-teal .m-icon { background:linear-gradient(135deg,#ccfbf1,#99f6e4); color:var(--teal); }
+  .m-cyan .m-icon { background:linear-gradient(135deg,#cffafe,#a5f3fc); color:#0891b2; }
+  .m-red .m-icon { background:linear-gradient(135deg,#fee2e2,#fecaca); color:var(--danger); }
+
+  main { padding:62px 12px 12px; max-width:600px; margin:0 auto; }
+  .page { display:none; animation:pageIn 0.35s ease; }
+  .page.active { display:block; }
+  @keyframes pageIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
+  .section-title { font-size:14px; font-weight:900; margin-bottom:10px; display:flex; align-items:center; gap:8px; text-transform:uppercase; letter-spacing:0.5px; }
+  .section-title::before { content:''; width:4px; height:16px; background:var(--grad-primary); border-radius:4px; }
+
+  .btn { width:100%; padding:10px 16px; border:none; border-radius:11px; background:var(--grad-primary); color:#fff; font-weight:900; font-size:11px; cursor:pointer; transition:all 0.3s; box-shadow:0 4px 14px rgba(226,19,110,0.35); display:flex; align-items:center; justify-content:center; gap:6px; font-family:inherit; text-transform:uppercase; letter-spacing:0.6px; }
+  .btn:hover { transform:translateY(-2px); }
+  .btn:disabled { background:#cbd5e1; box-shadow:none; cursor:not-allowed; transform:none; }
+  .btn-nagad { background:linear-gradient(135deg,#ec1c24,#c0141b); }
+  .btn-outline { background:transparent; border:1.5px solid var(--primary); color:var(--primary); box-shadow:none; }
+  .btn-soft { background:#fdf2f7; border:none; color:var(--primary); box-shadow:none; font-weight:900; }
+  .btn-success { background:linear-gradient(135deg,#16a34a,#15803d); }
+  .btn-danger { background:linear-gradient(135deg,#ef4444,#b91c1c); }
+  .btn-sm { padding:7px 12px; font-size:9px; border-radius:8px; width:auto; }
+
+  .pkg-grid { display:flex; flex-direction:column; gap:14px; }
+  .pkg-card { background:var(--card); border-radius:18px; overflow:hidden; position:relative; display:flex; flex-direction:column; border:2px solid transparent; background-clip:padding-box; box-shadow:0 6px 22px rgba(0,0,0,0.08); transition:all 0.4s; }
+  .pkg-card::before { content:''; position:absolute; inset:-2px; z-index:-1; background:linear-gradient(135deg,#e2136e,#f59e0b,#e2136e,#7c3aed,#e2136e); background-size:300% 300%; border-radius:18px; opacity:0.85; animation:borderShift 6s ease infinite; padding:2px; }
+  @keyframes borderShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+  .pkg-card:hover { transform:translateY(-3px); }
+  .pkg-inner { background:var(--card); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; margin:2px; }
+  .pkg-img-wrap { position:relative; width:100%; height:170px; overflow:hidden; background:linear-gradient(135deg,#f8fafc,#e2e8f0); }
+  .pkg-img { width:100%; height:100%; object-fit:cover; display:block; }
+  .pkg-stock-badge { position:absolute; top:8px; right:8px; z-index:3; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; font-size:8px; font-weight:800; padding:4px 8px; border-radius:16px; display:inline-flex; align-items:center; gap:3px; text-transform:uppercase; }
+  .pkg-stock-badge::before { content:''; width:4px; height:4px; border-radius:50%; background:#fff; }
+  .pkg-ribbon { position:absolute; top:10px; left:-28px; z-index:3; background:var(--grad-gold); color:#fff; font-size:8px; font-weight:900; padding:3px 34px; transform:rotate(-42deg); letter-spacing:1px; }
+  .pkg-body { padding:12px 14px 14px; display:flex; flex-direction:column; gap:8px; }
+  .pkg-title { font-size:13px; font-weight:900; color:#0f172a; text-transform:uppercase; letter-spacing:0.3px; }
+  .pkg-info-row { display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap; }
+  .pkg-price { color:var(--primary); font-size:17px; font-weight:900; display:flex; align-items:baseline; gap:2px; }
+  .pkg-price .currency { font-size:11px; opacity:0.75; }
+  .pkg-return { font-size:9px; color:#475569; background:linear-gradient(135deg,#f8fafc,#f1f5f9); padding:4px 9px; border-radius:8px; font-weight:800; border:1px solid #e2e8f0; text-transform:uppercase; }
+  .pkg-duration { font-size:9px; color:#94a3b8; font-weight:800; text-transform:uppercase; }
+  .pkg-buy-btn { width:100%; padding:9px 12px; border:none; border-radius:8px; background:var(--grad-primary); color:#fff; font-weight:900; font-size:10px; cursor:pointer; font-family:inherit; text-transform:uppercase; }
+
+  .skeleton-pkg { background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:18px; height:290px; }
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  .form-group { margin-bottom:12px; }
+  .form-group label { font-size:10px; font-weight:800; display:block; margin-bottom:5px; color:#334155; text-transform:uppercase; letter-spacing:0.4px; }
+  .form-group input, .form-group select, .form-group textarea { width:100%; padding:10px 12px; border:1.5px solid #e5e7eb; border-radius:9px; font-size:12px; outline:none; font-family:inherit; background:#fff; }
+
+  /* ═══ BEAUTIFUL INFO BOXES ═══ */
+  .info-box { position:relative; background:linear-gradient(135deg,#fff8e1,#fef3c7); border:1.5px solid #fcd34d; padding:12px 14px 12px 48px; border-radius:14px; font-size:11px; color:#78350f; margin-bottom:14px; line-height:1.6; font-weight:700; display:flex; align-items:center; gap:8px; min-height:48px; box-shadow:0 4px 14px rgba(245,158,11,0.18), inset 0 1px 0 rgba(255,255,255,0.7); }
+  .info-box::before { content:'💡'; position:absolute; left:0; top:0; bottom:0; width:38px; background:linear-gradient(180deg,#f59e0b,#d97706); display:flex; align-items:center; justify-content:center; font-size:16px; color:#fff; border-radius:14px 0 0 14px; }
+  .info-box.blue { background:linear-gradient(135deg,#eff6ff,#dbeafe); border-color:#93c5fd; color:#1e3a8a; box-shadow:0 4px 14px rgba(37,99,235,0.18), inset 0 1px 0 rgba(255,255,255,0.7); }
+  .info-box.blue::before { content:'ℹ️'; background:linear-gradient(180deg,#3b82f6,#2563eb); }
+  .info-box.green { background:linear-gradient(135deg,#f0fdf4,#dcfce7); border-color:#86efac; color:#14532d; box-shadow:0 4px 14px rgba(22,163,74,0.18), inset 0 1px 0 rgba(255,255,255,0.7); }
+  .info-box.green::before { content:'✅'; background:linear-gradient(180deg,#22c55e,#16a34a); }
+  .info-box.purple { background:linear-gradient(135deg,#faf5ff,#f3e8ff); border-color:#d8b4fe; color:#4c1d95; box-shadow:0 4px 14px rgba(124,58,237,0.18), inset 0 1px 0 rgba(255,255,255,0.7); }
+  .info-box.purple::before { content:'🎁'; background:linear-gradient(180deg,#a855f7,#7c3aed); }
+  .info-box.red { background:linear-gradient(135deg,#fef2f2,#fee2e2); border-color:#fca5a5; color:#7f1d1d; box-shadow:0 4px 14px rgba(220,38,38,0.18), inset 0 1px 0 rgba(255,255,255,0.7); }
+  .info-box.red::before { content:'⚠️'; background:linear-gradient(180deg,#ef4444,#dc2626); }
+
+  .min-deposit-banner { position:relative; background:linear-gradient(135deg,#eff6ff,#dbeafe,#bfdbfe); border:2px solid #93c5fd; border-radius:16px; padding:14px 16px 14px 60px; margin-bottom:14px; display:flex; align-items:center; min-height:60px; box-shadow:0 6px 20px rgba(37,99,235,0.2), inset 0 1px 0 rgba(255,255,255,0.7); }
+  .min-deposit-banner::before { content:'৳'; position:absolute; left:0; top:0; bottom:0; width:48px; background:linear-gradient(180deg,#3b82f6,#1d4ed8); display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:900; color:#fff; border-radius:14px 0 0 14px; }
+  .min-deposit-banner .mdb-text { flex:1; font-size:11px; color:#1e3a8a; font-weight:700; line-height:1.5; }
+  .min-deposit-banner .mdb-text b { color:#1d4ed8; font-size:14px; font-weight:900; }
+
+  .wallet-card { background:var(--grad-primary); color:#fff; border-radius:18px; padding:20px 18px; text-align:center; margin-bottom:14px; }
+  .wallet-card .label { font-size:10px; opacity:0.9; font-weight:700; text-transform:uppercase; }
+  .wallet-card .amount { font-size:28px; font-weight:900; margin:6px 0; }
+  .stat-row { display:flex; justify-content:space-around; margin-top:14px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.25); }
+  .stat-row .num { font-size:14px; font-weight:900; }
+  .stat-row .lbl { font-size:8px; opacity:0.85; margin-top:2px; font-weight:700; text-transform:uppercase; }
+
+  .list-item { background:var(--card); border-radius:12px; padding:11px 13px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.06); gap:8px; flex-wrap:wrap; }
+  .list-item .left { display:flex; flex-direction:column; gap:2px; flex:1; }
+  .list-item .t { font-size:11px; font-weight:800; text-transform:uppercase; }
+  .list-item .s { font-size:9px; color:var(--muted); }
+  .badge { font-size:8px; padding:3px 9px; border-radius:16px; font-weight:800; text-transform:uppercase; }
+  .badge.pending { background:#fef3c7; color:#b45309; }
+  .badge.approved { background:#dcfce7; color:#15803d; }
+  .badge.rejected { background:#fee2e2; color:#b91c1c; }
+  .badge-claim-btn { background:var(--grad-gold); color:#fff; border:none; padding:6px 11px; border-radius:8px; font-size:9px; font-weight:900; cursor:pointer; font-family:inherit; text-transform:uppercase; }
+
+  .profile-hero { background:linear-gradient(135deg,#334155,#0f172a); color:#fff; border-radius:18px; padding:20px 18px; text-align:center; margin-bottom:14px; }
+  .avatar { width:72px; height:72px; border-radius:50%; margin:0 auto 8px; background:var(--grad-primary); display:flex; align-items:center; justify-content:center; font-size:32px; border:3px solid rgba(255,255,255,0.35); overflow:hidden; }
+  .avatar img { width:100%; height:100%; object-fit:cover; }
+  .avatar.guest { background:linear-gradient(135deg,#64748b,#475569); }
+  .profile-hero .pname { font-size:15px; font-weight:800; text-transform:uppercase; }
+  .profile-hero .pphone { font-size:10px; opacity:0.85; }
+
+  .profile-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+  .profile-btn { background:#fff; border:none; border-radius:12px; padding:12px 8px 10px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:6px; box-shadow:0 3px 12px rgba(0,0,0,0.08); font-family:inherit; }
+  .profile-btn .pb-icon { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; }
+  .profile-btn .pb-icon svg { width:18px; height:18px; }
+  .profile-btn .pb-title { font-size:10px; font-weight:800; text-transform:uppercase; }
+  .profile-btn .pb-sub { font-size:8px; color:var(--muted); text-transform:uppercase; }
+  .pb-pink .pb-icon { background:linear-gradient(135deg,#fce7f3,#fbcfe8); color:var(--primary); }
+  .pb-blue .pb-icon { background:linear-gradient(135deg,#dbeafe,#bfdbfe); color:var(--blue); }
+  .pb-yellow .pb-icon { background:linear-gradient(135deg,#fef3c7,#fde68a); color:#b45309; }
+  .pb-green .pb-icon { background:linear-gradient(135deg,#dcfce7,#bbf7d0); color:var(--success); }
+  .pb-purple .pb-icon { background:linear-gradient(135deg,#f3e8ff,#e9d5ff); color:var(--purple); }
+  .pb-teal .pb-icon { background:linear-gradient(135deg,#ccfbf1,#99f6e4); color:var(--teal); }
+  .pb-cyan .pb-icon { background:linear-gradient(135deg,#cffafe,#a5f3fc); color:#0891b2; }
+  .pb-red .pb-icon { background:linear-gradient(135deg,#fee2e2,#fecaca); color:var(--danger); }
+
+  .ref-stat-card { background:linear-gradient(135deg,#7c3aed,#5b21b6); color:#fff; border-radius:16px; padding:14px; display:flex; justify-content:space-around; margin-bottom:12px; }
+  .ref-stat-card .stat-item { text-align:center; flex:1; }
+  .ref-stat-card .stat-item .num { font-size:18px; font-weight:900; }
+  .ref-stat-card .stat-item .lbl { font-size:8px; opacity:0.85; margin-top:2px; font-weight:700; text-transform:uppercase; }
+  .ref-stat-card .divider { width:1px; background:rgba(255,255,255,0.25); }
+
+  .tabbar { position:fixed; bottom:0; left:0; right:0; height:62px; background:rgba(255,255,255,0.98); backdrop-filter:blur(24px); display:flex; justify-content:space-around; align-items:center; box-shadow:0 -6px 24px rgba(0,0,0,0.12); z-index:160; padding:0 4px; border-top:1px solid rgba(255,255,255,0.9); }
+  .tab { display:flex; flex-direction:column; align-items:center; gap:1px; font-size:8px; color:#94a3b8; cursor:pointer; padding:6px 8px; font-weight:800; border-radius:12px; flex:1; font-family:inherit; border:none; background:transparent; max-width:75px; text-transform:uppercase; letter-spacing:0.3px; }
+  .tab .tab-icon { width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; background:transparent; }
+  .tab .tab-icon svg { width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:2; }
+  .tab.active { color:var(--primary); }
+  .tab.active .tab-icon { background:var(--grad-primary); box-shadow:0 5px 16px rgba(226,19,110,0.5); transform:translateY(-5px) scale(1.05); color:#fff; }
+  .tab.active .tab-icon svg { stroke:#fff; }
+  .tab .tab-label { text-transform:uppercase; font-size:8px; }
+
+  .toast { position:fixed; top:60px; left:50%; transform:translateX(-50%) translateY(-20px); background:#1a1a1a; color:#fff; padding:10px 16px; border-radius:10px; font-size:11px; z-index:999; opacity:0; transition:0.3s; pointer-events:none; max-width:90%; text-align:center; font-weight:700; }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  .toast.success { background:linear-gradient(135deg,#16a34a,#15803d); }
+  .toast.error { background:linear-gradient(135deg,#ef4444,#b91c1c); }
+
+  .empty { text-align:center; color:var(--muted); padding:28px 16px; font-size:11px; text-transform:uppercase; }
+
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:500; display:none; align-items:center; justify-content:center; padding:14px; backdrop-filter:blur(8px); }
+  .modal-overlay.active { display:flex; animation:fadeIn 0.25s; }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .modal-box { background:#fff; border-radius:18px; padding:0; max-width:380px; width:100%; max-height:90vh; overflow-y:auto; animation:slideUp 0.35s cubic-bezier(0.175,0.885,0.32,1.275); }
+  @keyframes slideUp { from{opacity:0; transform:translateY(40px) scale(0.94)} to{opacity:1; transform:translateY(0) scale(1)} }
+  .modal-header { padding:16px 18px 0; display:flex; justify-content:space-between; align-items:flex-start; }
+  .modal-title { font-size:14px; font-weight:900; text-transform:uppercase; letter-spacing:0.4px; }
+  .modal-sub { font-size:10px; color:var(--muted); margin-bottom:14px; }
+  .modal-close { background:#f1f5f9; border:none; width:26px; height:26px; border-radius:50%; font-size:12px; cursor:pointer; color:var(--muted); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .modal-body { padding:0 18px 18px; }
+  .modal-footer { padding:12px 18px 18px; display:flex; flex-direction:column; gap:7px; }
+  .icon-circle { width:52px; height:52px; border-radius:50%; margin:0 auto 10px; display:flex; align-items:center; justify-content:center; font-size:22px; }
+  .icon-pink { background:linear-gradient(135deg,#fce7f3,#fbcfe8); color:var(--primary); }
+  .icon-red { background:linear-gradient(135deg,#fee2e2,#fecaca); color:var(--danger); }
+  .icon-blue { background:linear-gradient(135deg,#dbeafe,#bfdbfe); color:var(--blue); }
+  .icon-gold { background:linear-gradient(135deg,#fef3c7,#fde68a); color:var(--gold-dark); }
+
+  #loginModal .modal-box { background:linear-gradient(180deg, #ffffff 0%, #fdf2f7 100%); border-radius:24px; position:relative; overflow:hidden; }
+  #loginModal .modal-box::before { content:''; position:absolute; top:0; left:0; right:0; height:100px; background:linear-gradient(135deg, #be123c 0%, #9f1239 50%, #881337 100%); z-index:0; }
+  #loginModal .modal-box::after { content:''; position:absolute; top:-40px; right:-40px; width:140px; height:140px; border-radius:50%; background:rgba(255,255,255,0.15); z-index:0; }
+  #loginModal .modal-header { position:relative; z-index:2; padding:16px 18px 0; padding-top:20px; }
+  #loginModal .modal-title { color:#fff; text-shadow:0 2px 4px rgba(0,0,0,0.2); }
+  #loginModal .modal-sub { color:rgba(255,255,255,0.9); margin-bottom:0; }
+  #loginModal .modal-close { background:rgba(255,255,255,0.25); color:#fff; }
+  #loginModal .modal-body { position:relative; z-index:2; padding:70px 20px 20px; margin-top:-40px; }
+  #loginModal .login-avatar-wrap { margin-top:0; margin-bottom:16px; }
+  #loginModal .login-avatar { width:88px; height:88px; border:4px solid #fff; box-shadow:0 8px 24px rgba(226,19,110,0.35); }
+  #loginModal .login-avatar-ring { background:conic-gradient(#e2136e,#f59e0b,#7c3aed,#16a34a,#e2136e); inset:-8px; animation:rotate 4s linear infinite; filter:blur(2px); }
+  #loginModal .form-group input { background:linear-gradient(135deg,#f8fafc,#f1f5f9); border:2px solid #e5e7eb; border-radius:12px; padding:12px 14px; font-size:13px; font-weight:700; }
+  #loginModal .modal-footer { padding:0 20px 20px; position:relative; z-index:2; }
+  #loginModal .btn { padding:13px; font-size:12px; font-weight:900; }
+  #loginModal .btn-soft { padding:12px; font-size:11px; }
+
+  .login-avatar-wrap { display:flex; flex-direction:column; align-items:center; margin-bottom:14px; }
+  .login-avatar { width:76px; height:76px; border-radius:50%; overflow:hidden; background:var(--grad-primary); border:3px solid rgba(226,19,110,0.2); display:flex; align-items:center; justify-content:center; font-size:34px; position:relative; }
+  .login-avatar img { width:100%; height:100%; object-fit:cover; }
+  .login-avatar-ring { position:absolute; inset:-6px; border-radius:50%; background:conic-gradient(#e2136e,#f59e0b,#7c3aed,#16a34a,#e2136e); z-index:-1; animation:rotate 4s linear infinite; }
+  @keyframes rotate { to{transform:rotate(360deg)} }
+
+  .hidden { display:none !important; }
+  .mt-2 { margin-top:8px; }
+
+  .banned-screen { position:fixed; inset:0; background:linear-gradient(135deg,#1f2937,#111827); z-index:2000; display:none; align-items:center; justify-content:center; padding:24px; }
+  .banned-screen.active { display:flex; }
+  .banned-box { max-width:400px; width:100%; text-align:center; color:#fff; }
+  .banned-box .icon { font-size:52px; margin-bottom:14px; }
+  .banned-box h1 { font-size:18px; margin-bottom:8px; color:#f87171; text-transform:uppercase; }
+
+  .feature-banner { border-radius:14px; padding:12px 14px; margin-bottom:12px; display:flex; align-items:center; gap:10px; background:linear-gradient(135deg,#8b5cf6,#6366f1); color:#fff; }
+  .feature-banner .fb-icon { font-size:24px; }
+  .feature-banner .fb-text { flex:1; }
+  .feature-banner .fb-text h4 { font-size:11px; font-weight:900; text-transform:uppercase; }
+  .feature-banner .fb-text p { font-size:9px; opacity:0.85; }
+  .feature-banner .fb-btn { background:rgba(255,255,255,0.25); border:1px solid rgba(255,255,255,0.4); color:#fff; padding:5px 10px; border-radius:7px; font-size:9px; font-weight:900; cursor:pointer; font-family:inherit; text-transform:uppercase; }
+
+  .quick-actions { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:12px; }
+  .qa-item { background:#fff; border:none; border-radius:11px; padding:9px 5px; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; font-family:inherit; box-shadow:0 2px 10px rgba(0,0,0,0.06); border:1px solid rgba(0,0,0,0.04); }
+  .qa-item .qa-icon { width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#fce7f3,#fbcfe8); color:var(--primary); }
+  .qa-item .qa-icon svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; }
+  .qa-item .qa-label { font-size:8px; font-weight:800; text-transform:uppercase; letter-spacing:0.3px; }
+
+  .daily-bonus-card { background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; border-radius:14px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+  .daily-bonus-card .db-left { display:flex; align-items:center; gap:8px; }
+  .daily-bonus-card .db-icon { font-size:26px; }
+  .daily-bonus-card .db-info h4 { font-size:11px; font-weight:900; text-transform:uppercase; }
+  .daily-bonus-card .db-info p { font-size:9px; opacity:0.9; }
+  .daily-bonus-card .db-btn { background:#fff; color:#d97706; border:none; padding:6px 12px; border-radius:8px; font-size:9px; font-weight:900; cursor:pointer; font-family:inherit; text-transform:uppercase; }
+
+  .leaderboard-item { display:flex; align-items:center; gap:9px; padding:9px 11px; background:#fff; border-radius:10px; margin-bottom:6px; }
+  .leaderboard-item .rank { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:900; color:#fff; background:linear-gradient(135deg,#94a3b8,#64748b); flex-shrink:0; }
+  .leaderboard-item .rank.gold { background:var(--grad-gold); }
+  .leaderboard-item .rank.silver { background:linear-gradient(135deg,#cbd5e1,#94a3b8); }
+  .leaderboard-item .rank.bronze { background:linear-gradient(135deg,#d97706,#92400e); }
+  .leaderboard-item .lb-info { flex:1; }
+  .leaderboard-item .lb-name { font-size:11px; font-weight:800; text-transform:uppercase; }
+  .leaderboard-item .lb-amount { font-size:9px; color:var(--muted); }
+
+  .news-item { background:#fff; border-radius:10px; padding:10px 12px; margin-bottom:7px; display:flex; gap:9px; }
+  .news-item .news-icon { width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; background:linear-gradient(135deg,#dbeafe,#bfdbfe); }
+  .news-item .news-text h4 { font-size:10px; font-weight:800; text-transform:uppercase; }
+  .news-item .news-text p { font-size:9px; color:var(--muted); }
+
+  .settings-list { display:flex; flex-direction:column; gap:6px; }
+  .settings-row { background:#fff; border-radius:10px; padding:10px 12px; display:flex; align-items:center; justify-content:space-between; gap:9px; }
+  .settings-row .sr-left { display:flex; align-items:center; gap:9px; }
+  .settings-row .sr-icon { width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; }
+  .settings-row .sr-title { font-size:11px; font-weight:800; text-transform:uppercase; }
+  .settings-row .sr-sub { font-size:9px; color:var(--muted); }
+
+  .checkin-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:10px; }
+  .checkin-day { background:#f1f5f9; border-radius:7px; padding:6px 3px; text-align:center; font-size:8px; font-weight:800; color:#94a3b8; border:1px solid #e2e8f0; text-transform:uppercase; }
+  .checkin-day.claimed { background:var(--grad-primary); color:#fff; }
+  .checkin-day.today { background:#fef3c7; color:#b45309; }
+
+  .mission-item { display:flex; align-items:center; gap:9px; background:#fff; padding:10px 12px; border-radius:10px; margin-bottom:7px; }
+  .mission-item .m-check { width:22px; height:22px; border-radius:50%; border:2px solid #e2e8f0; display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; }
+  .mission-item .m-check.done { background:var(--grad-primary); border-color:transparent; color:#fff; }
+  .mission-item .m-info { flex:1; }
+  .mission-item .m-info h4 { font-size:10px; font-weight:800; text-transform:uppercase; }
+  .mission-item .m-info p { font-size:8px; color:var(--muted); }
+  .mission-item .m-reward { font-size:9px; font-weight:900; color:var(--primary); }
+
+  .support-float { position:fixed; bottom:76px; right:12px; z-index:80; width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,#25d366,#128c7e); color:#fff; border:none; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+
+  .ref-link-box { background:linear-gradient(135deg,#f3e8ff,#e9d5ff); border:1.5px dashed #7c3aed; border-radius:12px; padding:10px 12px; display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .ref-link-box .rl-text { flex:1; font-size:9px; color:#4c1d95; font-weight:700; word-break:break-all; }
+  .ref-link-box .rl-btn { background:var(--grad-primary); color:#fff; border:none; padding:7px 12px; border-radius:8px; font-size:9px; font-weight:900; cursor:pointer; font-family:inherit; text-transform:uppercase; }
+
+  .req-box { background:linear-gradient(135deg,#fee2e2,#fecaca); border:1.5px solid #fca5a5; border-radius:12px; padding:12px 14px; margin-bottom:12px; display:flex; align-items:flex-start; gap:10px; }
+  .req-box.ok { background:linear-gradient(135deg,#dcfce7,#bbf7d0); border-color:#86efac; }
+  .req-box .req-icon { width:36px; height:36px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+  .req-box .req-content { flex:1; }
+  .req-box .req-title { font-size:11px; font-weight:900; color:#7f1d1d; margin-bottom:3px; text-transform:uppercase; }
+  .req-box.ok .req-title { color:#14532d; }
+  .req-box .req-text { font-size:10px; color:#991b1b; line-height:1.5; font-weight:600; }
+  .req-box.ok .req-text { color:#166534; }
+  .req-box .req-progress { display:flex; align-items:center; gap:6px; margin-top:8px; }
+  .req-box .req-progress-bar { flex:1; height:6px; background:rgba(0,0,0,0.1); border-radius:20px; overflow:hidden; }
+  .req-box .req-progress-fill { height:100%; background:linear-gradient(90deg,#dc2626,#ef4444); border-radius:20px; }
+  .req-box.ok .req-progress-fill { background:linear-gradient(90deg,#16a34a,#22c55e); }
+  .req-box .req-progress-text { font-size:9px; font-weight:900; color:#7f1d1d; }
+  .req-box.ok .req-progress-text { color:#14532d; }
+
+  .deposit-hero { background:linear-gradient(135deg,#dc2626 0%,#991b1b 50%,#7f1d1d 100%); border-radius:24px; padding:0; margin-bottom:18px; }
+  .deposit-hero-header { background:linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05)); padding:14px 18px; display:flex; align-items:center; gap:12px; border-bottom:1px solid rgba(255,255,255,0.15); }
+  .deposit-hero-logo { width:44px; height:44px; border-radius:13px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:23px; font-weight:900; color:#dc2626; }
+  .deposit-hero-title { color:#fff; font-size:13.5px; font-weight:900; text-transform:uppercase; }
+  .deposit-hero-sub { color:rgba(255,255,255,0.85); font-size:10px; font-weight:600; }
+  .deposit-hero-badge { margin-left:auto; background:rgba(255,255,255,0.25); padding:6px 11px; border-radius:9px; color:#fff; font-size:8px; font-weight:900; border:1.5px solid rgba(255,255,255,0.35); text-transform:uppercase; }
+  .deposit-hero-body { padding:18px; }
+  .deposit-label { color:rgba(255,255,255,0.95); font-size:10px; font-weight:800; text-transform:uppercase; margin-bottom:9px; display:flex; align-items:center; gap:6px; }
+  .deposit-number-box { display:flex; align-items:stretch; gap:8px; margin-bottom:14px; }
+  .deposit-number { flex:1; background:rgba(0,0,0,0.3); border:2.5px dashed rgba(255,255,255,0.45); border-radius:13px; padding:14px 12px; color:#fff; font-size:17px; font-weight:900; letter-spacing:1.2px; display:flex; align-items:center; justify-content:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .deposit-copy-btn { width:50px; border:none; border-radius:13px; background:linear-gradient(135deg,#fbbf24,#d97706); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .deposit-copy-btn svg { width:20px; height:20px; }
+  .deposit-warning { display:flex; align-items:center; gap:8px; background:rgba(251,191,36,0.15); border:1.5px solid rgba(251,191,36,0.35); border-radius:11px; padding:11px 13px; }
+  .deposit-warning .dw-icon { font-size:16px; flex-shrink:0; }
+  .deposit-warning .dw-text { color:#fef3c7; font-size:11px; font-weight:700; line-height:1.5; }
+
+  .deposit-steps { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:16px; }
+  .deposit-step { background:#fff; border-radius:13px; padding:13px 8px; text-align:center; }
+  .deposit-step-num { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:14px; margin:0 auto 8px; }
+  .deposit-step:nth-child(1) .deposit-step-num { background:linear-gradient(135deg,#dbeafe,#bfdbfe); color:#2563eb; }
+  .deposit-step:nth-child(2) .deposit-step-num { background:linear-gradient(135deg,#fef3c7,#fde68a); color:#b45309; }
+  .deposit-step:nth-child(3) .deposit-step-num { background:linear-gradient(135deg,#dcfce7,#bbf7d0); color:#16a34a; }
+  .deposit-step-text { font-size:9.5px; font-weight:900; text-transform:uppercase; letter-spacing:0.4px; }
+
+  .deposit-form-card { background:#fff; border-radius:18px; padding:18px; margin-bottom:14px; }
+  .deposit-form-card label { display:flex; align-items:center; gap:6px; font-size:11px; font-weight:900; text-transform:uppercase; margin-bottom:9px; }
+  .deposit-form-card .input-wrap { position:relative; }
+  .deposit-form-card .input-icon { position:absolute; left:15px; top:50%; transform:translateY(-50%); font-size:16px; font-weight:900; color:var(--primary); }
+  .deposit-form-card input { width:100%; padding:14px 16px 14px 38px; border:2.5px solid #e5e7eb; border-radius:12px; font-size:15px; font-weight:800; outline:none; font-family:inherit; }
+  .deposit-form-card .input-hint { font-size:9.5px; color:var(--muted); margin-top:7px; font-weight:700; }
+  .deposit-form-card .input-hint.ok { color:var(--success); }
+  .deposit-form-card .input-hint.warn { color:var(--warning); }
+
+  .deposit-submit-btn { width:100%; padding:15px; border:none; border-radius:13px; background:linear-gradient(135deg,#ec1c24 0%,#c0141b 100%); color:#fff; font-weight:900; font-size:13px; cursor:pointer; font-family:inherit; text-transform:uppercase; letter-spacing:0.6px; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:16px; }
+
+  .deposit-history-item { background:#fff; border-radius:13px; padding:13px 15px; margin-bottom:9px; display:flex; align-items:center; gap:11px; position:relative; overflow:hidden; }
+  .deposit-history-item::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; }
+  .deposit-history-item.pending::before { background:linear-gradient(180deg,#fbbf24,#f59e0b); }
+  .deposit-history-item.approved::before { background:linear-gradient(180deg,#16a34a,#15803d); }
+  .deposit-history-item.rejected::before { background:linear-gradient(180deg,#ef4444,#b91c1c); }
+  .deposit-history-icon { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0; }
+  .deposit-history-item.pending .deposit-history-icon { background:linear-gradient(135deg,#fef3c7,#fde68a); }
+  .deposit-history-item.approved .deposit-history-icon { background:linear-gradient(135deg,#dcfce7,#bbf7d0); }
+  .deposit-history-item.rejected .deposit-history-icon { background:linear-gradient(135deg,#fee2e2,#fecaca); }
+  .deposit-history-body { flex:1; }
+  .deposit-history-amount { font-size:14px; font-weight:900; }
+  .deposit-history-meta { font-size:9.5px; color:var(--muted); font-weight:700; }
+  .deposit-history-badge { font-size:8.5px; font-weight:900; padding:4px 10px; border-radius:20px; text-transform:uppercase; }
+  .deposit-history-badge.pending { background:#fef3c7; color:#b45309; }
+  .deposit-history-badge.approved { background:#dcfce7; color:#15803d; }
+  .deposit-history-badge.rejected { background:#fee2e2; color:#b91c1c; }
+
+  .deposit-empty { text-align:center; padding:40px 20px; }
+  .deposit-empty-icon { font-size:48px; margin-bottom:10px; opacity:0.4; }
+  .deposit-empty-title { font-size:12px; font-weight:900; text-transform:uppercase; }
+  .deposit-empty-sub { font-size:10px; color:var(--muted); }
+
+  .withdraw-hero { background:linear-gradient(135deg,#7f1d1d 0%,#991b1b 50%,#dc2626 100%); border-radius:24px; padding:0; margin-bottom:18px; }
+  .withdraw-hero-header { background:linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05)); padding:14px 18px; display:flex; align-items:center; gap:12px; }
+  .withdraw-hero-logo { width:44px; height:44px; border-radius:13px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:23px; }
+  .withdraw-hero-title { color:#fff; font-size:13.5px; font-weight:900; text-transform:uppercase; }
+  .withdraw-hero-sub { color:rgba(255,255,255,0.85); font-size:10px; font-weight:600; }
+  .withdraw-hero-body { padding:18px; }
+  .withdraw-balance-display { background:rgba(0,0,0,0.25); border-radius:14px; padding:14px 16px; text-align:center; }
+  .withdraw-balance-display .wbd-label { color:rgba(255,255,255,0.85); font-size:9px; font-weight:800; text-transform:uppercase; }
+  .withdraw-balance-display .wbd-amount { color:#fff; font-size:26px; font-weight:900; }
+
+  /* ═══ PERFECT SPIN WHEEL — text always upright ═══ */
+  .spin-page-hero { background:linear-gradient(135deg,#7c3aed 0%,#5b21b6 50%,#4c1d95 100%); border-radius:20px; padding:18px 16px; margin-bottom:16px; text-align:center; position:relative; overflow:hidden; }
+  .spin-page-hero::before { content:''; position:absolute; top:-50px; right:-50px; width:150px; height:150px; border-radius:50%; background:rgba(255,255,255,0.1); }
+  .spin-page-hero::after { content:''; position:absolute; bottom:-60px; left:-30px; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,0.06); }
+  .spin-page-hero .sph-title { color:#fff; font-size:16px; font-weight:900; text-transform:uppercase; position:relative; z-index:1; margin-bottom:4px; }
+  .spin-page-hero .sph-sub { color:rgba(255,255,255,0.9); font-size:10px; font-weight:600; position:relative; z-index:1; margin-bottom:12px; }
+  .spin-ticket-display { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,#fbbf24,#d97706); padding:10px 20px; border-radius:30px; position:relative; z-index:1; }
+  .spin-ticket-display .std-count { color:#fff; font-size:24px; font-weight:900; line-height:1; }
+  .spin-ticket-display .std-label { color:rgba(255,255,255,0.95); font-size:9px; font-weight:800; text-transform:uppercase; }
+
+  .spin-wheel-container { padding:10px 0 16px; display:flex; flex-direction:column; align-items:center; }
+  .spin-frame { position:relative; width:320px; height:320px; padding:16px; background:conic-gradient(from 0deg, #fbbf24, #f59e0b, #d97706, #b45309, #fbbf24); border-radius:50%; box-shadow:0 0 0 6px #fff, 0 0 0 8px #fbbf24, 0 20px 50px rgba(251,191,36,0.5); }
+  .spin-bulbs { position:absolute; inset:0; pointer-events:none; animation:bulbRotate 4s linear infinite; z-index:3; }
+  @keyframes bulbRotate { to{transform:rotate(360deg)} }
+  .spin-bulb { position:absolute; width:10px; height:10px; background:radial-gradient(circle, #fff 20%, #fef3c7 50%, #f59e0b 100%); border-radius:50%; box-shadow:0 0 12px #fde68a, 0 0 6px #fff; animation:bulbBlink 0.8s infinite; }
+  .spin-bulb:nth-child(odd) { animation-delay:0.4s; }
+  @keyframes bulbBlink { 0%,100%{opacity:1; transform:scale(1)} 50%{opacity:0.4; transform:scale(0.8)} }
+  .spin-wheel-wrap { width:100%; height:100%; border-radius:50%; box-shadow:inset 0 0 0 4px #92400e, inset 0 0 0 6px #d97706; position:relative; }
+  .spin-wheel { width:100%; height:100%; border-radius:50%; position:relative; overflow:hidden; transition:transform 5s cubic-bezier(0.17,0.67,0.12,0.99); transform:rotate(0deg); }
+
+  /* Each segment is a rotated container */
+  .spin-segment { position:absolute; top:0; left:50%; width:50%; height:100%; transform-origin:0% 50%; }
+  .spin-segment-inner { width:100%; height:100%; clip-path:polygon(0 0, 0 100%, 100% 50%); display:flex; align-items:center; justify-content:flex-end; padding-right:30px; }
+  /* Text is rotated to be readable from outside */
+  .spin-segment-text {
+    color:#fff;
+    font-weight:900;
+    font-size:17px;
+    text-shadow:0 2px 6px rgba(0,0,0,0.7), 0 0 3px rgba(0,0,0,0.6);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    line-height:1;
+    /* Rotate so text reads from center outward */
+    transform:rotate(90deg);
+  }
+  .spin-segment-text .spin-amt { font-size:17px; letter-spacing:-0.3px; }
+  .spin-segment-text .spin-amt-symbol { font-size:11px; opacity:0.95; margin-bottom:-2px; }
+  /* Alternate text position so they don't overlap */
+  .spin-segment:nth-child(even) .spin-segment-text { transform:rotate(-90deg); }
+
+  .spin-wheel-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:80px; height:80px; border-radius:50%; background:radial-gradient(circle at 30% 30%, #fff, #fbbf24 60%, #d97706 100%); display:flex; align-items:center; justify-content:center; font-size:34px; z-index:6; border:4px solid #fff; }
+  .spin-pointer { position:absolute; top:-14px; left:50%; transform:translateX(-50%); width:0; height:0; z-index:8; border-left:16px solid transparent; border-right:16px solid transparent; border-top:32px solid #dc2626; filter:drop-shadow(0 6px 12px rgba(220,38,38,0.7)); }
+  .spin-pointer::after { content:''; position:absolute; top:-8px; left:-10px; width:20px; height:20px; background:radial-gradient(circle, #fff 30%, #dc2626 100%); border-radius:50%; border:3px solid #fff; }
+  .spin-btn-wrap { margin-top:24px; display:flex; justify-content:center; width:100%; padding:0 20px; }
+  .spin-btn { background:linear-gradient(135deg,#e2136e,#b30d55); color:#fff; border:none; padding:16px 44px; border-radius:16px; font-family:inherit; font-weight:900; font-size:15px; cursor:pointer; display:inline-flex; align-items:center; gap:10px; text-transform:uppercase; letter-spacing:1px; position:relative; overflow:hidden; }
+  .spin-btn:disabled { background:#cbd5e1; cursor:not-allowed; opacity:0.7; }
+  .spin-status-box { background:linear-gradient(135deg,#fff8e1,#fef3c7); border:2px solid #fde68a; border-radius:14px; padding:12px 18px; margin:20px auto 0; max-width:320px; font-size:11px; color:#78350f; font-weight:800; text-align:center; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .spin-status-box.success { background:linear-gradient(135deg,#dcfce7,#bbf7d0); border-color:#86efac; color:#14532d; }
+  .spin-status-box.error { background:linear-gradient(135deg,#fee2e2,#fecaca); border-color:#fca5a5; color:#7f1d1d; }
+
+  .win-popup { position:fixed; inset:0; z-index:800; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); display:none; align-items:center; justify-content:center; padding:20px; }
+  .win-popup.active { display:flex; animation:fadeIn 0.3s; }
+  .win-popup-box { background:linear-gradient(135deg,#fbbf24,#f59e0b,#d97706); border-radius:28px; padding:36px 26px; max-width:340px; width:100%; text-align:center; position:relative; overflow:hidden; }
+  .win-popup-emoji { font-size:72px; margin-bottom:14px; }
+  .win-popup-title { color:#fff; font-size:20px; font-weight:900; text-transform:uppercase; text-shadow:0 3px 8px rgba(0,0,0,0.35); margin-bottom:8px; }
+  .win-popup-amount { color:#fff; font-size:52px; font-weight:900; text-shadow:0 5px 16px rgba(0,0,0,0.5); margin:14px 0; }
+  .win-popup-amount .sym { font-size:30px; opacity:0.9; }
+  .win-popup-msg { color:#fff; font-size:12px; font-weight:700; margin-bottom:18px; text-transform:uppercase; }
+  .win-popup-btn { background:#fff; color:#d97706; border:none; padding:14px 36px; border-radius:14px; font-family:inherit; font-weight:900; font-size:13px; cursor:pointer; text-transform:uppercase; }
+
+  .win-history-card { background:#fff; border-radius:12px; padding:12px 14px; margin-bottom:8px; display:flex; align-items:center; gap:10px; }
+  .win-history-icon { width:36px; height:36px; border-radius:10px; background:var(--grad-gold); color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+  .win-history-body { flex:1; }
+  .win-history-amount { font-size:14px; font-weight:900; color:var(--success); }
+  .win-history-date { font-size:9px; color:var(--muted); font-weight:700; }
+
+  .spin-rewards-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+  .spin-reward-item { background:#fff; border-radius:11px; padding:10px 4px; text-align:center; border:1.5px solid rgba(0,0,0,0.04); position:relative; }
+  .spin-reward-item.rare { border-color:#fbbf24; background:linear-gradient(135deg,#fffbeb,#fef3c7); }
+  .spin-reward-item .sr-label { font-size:8px; color:var(--muted); font-weight:800; text-transform:uppercase; margin-bottom:2px; }
+  .spin-reward-item .sr-amount { font-size:14px; font-weight:900; }
+  .spin-reward-item .sr-rare-badge { position:absolute; top:2px; right:2px; background:var(--grad-gold); color:#fff; font-size:6px; font-weight:900; padding:1px 5px; border-radius:10px; text-transform:uppercase; }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <header class="app-header">
+    <button id="openMenu" style="background:rgba(255,255,255,0.18); border:none; color:#fff; width:28px; height:28px; border-radius:8px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; position:relative; z-index:2;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="brand">
+      <div class="brand-logo">🇧🇩</div>
+      <div class="brand-text">
+        <div class="name">Money Game Bd</div>
+        <div class="tag">EARN • GROW</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <span class="vip-chip hidden" id="vipBadgeHeader">⭐ VIP</span>
+      <a href="javascript:void(0)" target="_blank" rel="noopener noreferrer" class="tg-icon-btn hidden" id="tgBtnHeader">
+        <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+      </a>
+      <button class="bal-pill" id="headerBalClick"><span class="coin">💰</span> <span id="headerBalance">0</span></button>
+    </div>
+  </header>
+
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="sidenav" id="sidenav">
+    <div class="sidenav-header">
+      <button class="back-btn" id="menuBackBtn">BACK</button>
+      <div class="sidenav-tg-wrap">
+        <a href="javascript:void(0)" target="_blank" rel="noopener noreferrer" class="sidenav-tg-btn hidden" id="tgBtnSidenav">
+          <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        </a>
+        <span class="sidenav-tg-label hidden" id="vipBadgeSidenav">⭐ VIP</span>
+      </div>
+      <div class="sidenav-avatar guest" id="navAvatar">👤</div>
+      <div class="sidenav-info">
+        <h2 id="navName">GUEST</h2>
+        <p id="navPhone">NOT LOGGED IN</p>
+      </div>
+    </div>
+
+    <div class="menu-section-title">MAIN MENU</div>
+    <div class="menu-list">
+      <button class="menu-card m-pink" data-page="home"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="m-text"><div class="m-title">HOME</div><div class="m-sub">VIEW PACKAGES</div></div><div class="m-arrow">›</div></button>
+      <button class="menu-card m-yellow" data-page="deposit"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div class="m-text"><div class="m-title">DEPOSIT</div><div class="m-sub">ADD MONEY</div></div><div class="m-arrow">›</div></button>
+      <button class="menu-card m-red" data-page="withdraw"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></div><div class="m-text"><div class="m-title">WITHDRAW</div><div class="m-sub">CASH OUT</div></div><div class="m-arrow">›</div></button>
+      <button class="menu-card m-green" data-page="wallet"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div><div class="m-text"><div class="m-title">WALLET</div><div class="m-sub">BALANCE</div></div><div class="m-arrow">›</div></button>
+      <button class="menu-card m-blue" data-page="profile"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="m-text"><div class="m-title">PROFILE</div><div class="m-sub">ACCOUNT</div></div><div class="m-arrow">›</div></button>
+      <button class="menu-card m-purple" data-page="referral"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/></svg></div><div class="m-text"><div class="m-title">REFERRAL</div><div class="m-sub">INVITE</div></div><div class="m-arrow">›</div></button>
+    </div>
+
+    <div class="menu-section-title">EARN MORE</div>
+    <div class="menu-list">
+      <button class="menu-card m-yellow" data-page="daily-bonus"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/></svg></div><div class="m-text"><div class="m-title">DAILY BONUS</div><div class="m-sub">FREE</div></div><div class="m-arrow">›</div></button>
+      <button class="menu-card m-pink" data-page="spin"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="m-text"><div class="m-title">SPIN WHEEL</div><div class="m-sub">WIN CASH</div></div><div class="m-arrow">›</div></button>
+      <button class="menu-card m-teal" data-page="missions"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><div class="m-text"><div class="m-title">MISSIONS</div><div class="m-sub">TASKS</div></div><div class="m-arrow">›</div></button>
+      <button class="menu-card m-cyan" data-page="checkin"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="m-text"><div class="m-title">CHECK-IN</div><div class="m-sub">REWARD</div></div><div class="m-arrow">›</div></button>
+      <button class="menu-card m-purple" data-page="leaderboard"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div><div class="m-text"><div class="m-title">LEADERBOARD</div><div class="m-sub">TOP</div></div><div class="m-arrow">›</div></button>
+      <button class="menu-card m-green" data-page="vip"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="m-text"><div class="m-title">VIP CLUB</div><div class="m-sub">PREMIUM</div></div><div class="m-arrow">›</div></button>
+    </div>
+
+    <div class="menu-section-title">INFO</div>
+    <div class="menu-list">
+      <button class="menu-card m-blue" data-page="news"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2z"/></svg></div><div class="m-text"><div class="m-title">NEWS</div><div class="m-sub">UPDATES</div></div><div class="m-arrow">›</div></button>
+      <button class="menu-card m-teal" id="menuHelp"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="m-text"><div class="m-title">HELP</div><div class="m-sub">SUPPORT</div></div><div class="m-arrow">›</div></button>
+      <button class="menu-card m-purple" id="menuAbout"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="m-text"><div class="m-title">ABOUT</div><div class="m-sub">INFO</div></div><div class="m-arrow">›</div></button>
+      <button class="menu-card m-cyan" id="menuShare"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div><div class="m-text"><div class="m-title">SHARE</div><div class="m-sub">INVITE</div></div><div class="m-arrow">›</div></button>
+      <button class="menu-card m-green" id="loginMenuBtn"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="m-text"><div class="m-title">LOGIN / SIGNUP</div><div class="m-sub">ENTER</div></div><div class="m-arrow">›</div></button>
+      <button class="menu-card m-red hidden" id="logoutBtn"><div class="m-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div><div class="m-text"><div class="m-title">LOGOUT</div><div class="m-sub">EXIT</div></div><div class="m-arrow">›</div></button>
+    </div>
+  </aside>
+
+  <main>
+    <section class="page active" id="page-home">
+      <div class="section-title">QUICK ACTIONS</div>
+      <div class="quick-actions">
+        <button class="qa-item" onclick="showPage('deposit')"><div class="qa-icon"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div class="qa-label">DEPOSIT</div></button>
+        <button class="qa-item" onclick="showPage('withdraw')"><div class="qa-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></div><div class="qa-label">WITHDRAW</div></button>
+        <button class="qa-item" onclick="showPage('referral')"><div class="qa-icon"><svg viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/></svg></div><div class="qa-label">REFERRAL</div></button>
+        <button class="qa-item" onclick="showPage('wallet')"><div class="qa-icon"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div><div class="qa-label">WALLET</div></button>
+      </div>
+
+      <div class="daily-bonus-card hidden" id="homeDailyBanner">
+        <div class="db-left"><div class="db-icon">🎁</div><div class="db-info"><h4>DAILY BONUS</h4><p>CLAIM YOUR FREE BONUS!</p></div></div>
+        <button class="db-btn" onclick="showPage('daily-bonus')">CLAIM</button>
+      </div>
+
+      <div class="feature-banner">
+        <div class="fb-icon">🎰</div>
+        <div class="fb-text"><h4>SPIN & WIN</h4><p>TRY YOUR LUCK!</p></div>
+        <button class="fb-btn" onclick="showPage('spin')">PLAY</button>
+      </div>
+
+      <div class="section-title">FEATURED PACKAGES</div>
+      <div class="pkg-grid" id="pkgGrid">
+        <div class="skeleton-pkg"></div>
+        <div class="skeleton-pkg"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-deposit">
+      <div class="section-title">DEPOSIT</div>
+      <div class="deposit-hero">
+        <div class="deposit-hero-header">
+          <div class="deposit-hero-logo">N</div>
+          <div>
+            <div class="deposit-hero-title">NAGAD PAYMENT</div>
+            <div class="deposit-hero-sub">SEND MONEY / PERSONAL</div>
+          </div>
+          <div class="deposit-hero-badge">✓ OFFICIAL</div>
+        </div>
+        <div class="deposit-hero-body">
+          <div class="deposit-label">💰 SEND MONEY TO</div>
+          <div class="deposit-number-box">
+            <div class="deposit-number" id="nagadNumber">Loading...</div>
+            <button class="deposit-copy-btn" id="copyNagadBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+          </div>
+          <div class="deposit-warning">
+            <div class="dw-icon">⚠️</div>
+            <div class="dw-text">প্রথমে নগদ অ্যাপ থেকে টাকা পাঠান, তারপর নিচে TrxID দিন।</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="deposit-steps">
+        <div class="deposit-step"><div class="deposit-step-num">1</div><div class="deposit-step-text">SEND MONEY</div></div>
+        <div class="deposit-step"><div class="deposit-step-num">2</div><div class="deposit-step-text">GET TRXID</div></div>
+        <div class="deposit-step"><div class="deposit-step-num">3</div><div class="deposit-step-text">SUBMIT</div></div>
+      </div>
+
+      <div class="min-deposit-banner">
+        <div class="mdb-text">MINIMUM DEPOSIT: <b>৳<span id="minDepositDisplay">400</span></b> — ANY AMOUNT BELOW WILL BE REJECTED.</div>
+      </div>
+
+      <div class="deposit-form-card">
+        <div style="margin-bottom:14px;">
+          <label>💵 AMOUNT (৳)</label>
+          <div class="input-wrap">
+            <div class="input-icon">৳</div>
+            <input type="number" id="depositAmount" placeholder="Enter amount" />
+          </div>
+          <div class="input-hint" id="depositHint"></div>
+        </div>
+        <div>
+          <label>🔑 TRANSACTION ID (TRXID)</label>
+          <div class="input-wrap">
+            <div class="input-icon">#</div>
+            <input type="text" id="depositTrx" placeholder="e.g. 9F7A2B1C3D" style="letter-spacing:0.5px;" />
+          </div>
+          <div class="input-hint">FIND TRXID IN YOUR NAGAD TRANSACTION HISTORY.</div>
+        </div>
+      </div>
+
+      <button class="deposit-submit-btn" id="submitDeposit">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+        SUBMIT DEPOSIT REQUEST
+      </button>
+
+      <div class="section-title" style="margin-top:20px;">📜 MY DEPOSIT HISTORY</div>
+      <div id="depositHistory"></div>
+    </section>
+
+    <section class="page" id="page-withdraw">
+      <div class="section-title">WITHDRAW</div>
+      <div class="withdraw-hero">
+        <div class="withdraw-hero-header">
+          <div class="withdraw-hero-logo">💸</div>
+          <div>
+            <div class="withdraw-hero-title">WITHDRAW MONEY</div>
+            <div class="withdraw-hero-sub">FAST & SECURE</div>
+          </div>
+        </div>
+        <div class="withdraw-hero-body">
+          <div class="withdraw-balance-display">
+            <div class="wbd-label">AVAILABLE BALANCE</div>
+            <div class="wbd-amount">৳ <span id="withdrawCurrentBal">0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="req-box" id="withdrawReqBox">
+        <div class="req-icon">🔒</div>
+        <div class="req-content">
+          <div class="req-title" id="reqTitle">WITHDRAW LOCKED</div>
+          <div class="req-text" id="reqText">You need to refer 2 friends who must deposit before you can withdraw.</div>
+          <div class="req-progress">
+            <div class="req-progress-bar"><div class="req-progress-fill" id="reqProgressFill" style="width:0%;"></div></div>
+            <div class="req-progress-text" id="reqProgressText">0 / 2</div>
+          </div>
+        </div>
+      </div>
+      <div class="info-box red">ENTER CORRECT NAGAD NUMBER. ADMIN APPROVAL REQUIRED.</div>
+      <div class="info-box blue"><b>MINIMUM WITHDRAW:</b> ৳ <span id="minWithdrawDisplay">50</span></div>
+      <div class="info-box green hidden" id="cooldownInfo">⏳ <b>NEXT WITHDRAW:</b> <span id="cooldownTimer">-</span></div>
+      <div class="form-group">
+        <label>NAGAD NUMBER</label>
+        <input type="text" id="withdrawNumber" placeholder="01XXXXXXXXX" maxlength="11" />
+      </div>
+      <div class="form-group">
+        <label>AMOUNT (৳)</label>
+        <input type="number" id="withdrawAmount" placeholder="e.g. 100" />
+      </div>
+      <button class="btn btn-danger" id="submitWithdraw">💸 SEND WITHDRAW REQUEST</button>
+      <div class="section-title" style="margin-top:18px;">WITHDRAW HISTORY</div>
+      <div id="withdrawHistory"><div class="empty">LOGIN REQUIRED</div></div>
+    </section>
+
+    <section class="page" id="page-wallet">
+      <div class="wallet-card">
+        <div class="label">TOTAL BALANCE</div>
+        <div class="amount">৳ <span id="walletBalance">0</span></div>
+        <div class="stat-row">
+          <div><div class="num" id="totalEarned">0</div><div class="lbl">EARNED</div></div>
+          <div><div class="num" id="activeCount">0</div><div class="lbl">ACTIVE</div></div>
+          <div><div class="num" id="totalInvested">0</div><div class="lbl">INVESTED</div></div>
+        </div>
+      </div>
+      <div class="section-title">MY PACKAGES</div>
+      <div id="myPackages"><div class="empty">LOGIN REQUIRED</div></div>
+    </section>
+
+    <section class="page" id="page-profile">
+      <div class="profile-hero">
+        <div class="avatar guest" id="profileAvatar">👤</div>
+        <div class="pname" id="profileName">GUEST</div>
+        <div class="pphone" id="profilePhone">NOT LOGGED IN</div>
+      </div>
+      <div class="section-title">ACCOUNT</div>
+      <div class="profile-grid">
+        <button class="profile-btn pb-pink" id="btnEditName"><div class="pb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div><div class="pb-title">EDIT NAME</div><div class="pb-sub">PROFILE</div></button>
+        <button class="profile-btn pb-blue" id="btnChangePass"><div class="pb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="pb-title">PASSWORD</div><div class="pb-sub">CHANGE</div></button>
+        <button class="profile-btn pb-yellow" id="btnGoDeposit"><div class="pb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div class="pb-title">DEPOSIT</div><div class="pb-sub">ADD</div></button>
+        <button class="profile-btn pb-red" id="btnGoWithdraw"><div class="pb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></div><div class="pb-title">WITHDRAW</div><div class="pb-sub">CASH OUT</div></button>
+      </div>
+      <div class="section-title">MORE</div>
+      <div class="profile-grid">
+        <button class="profile-btn pb-purple" onclick="showPage('referral')"><div class="pb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/></svg></div><div class="pb-title">REFERRAL</div><div class="pb-sub">INVITE</div></button>
+        <button class="profile-btn pb-teal" id="btnHelp"><div class="pb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="pb-title">HELP</div><div class="pb-sub">SUPPORT</div></button>
+        <button class="profile-btn pb-cyan" id="btnAbout"><div class="pb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><div class="pb-title">ABOUT</div><div class="pb-sub">INFO</div></button>
+        <button class="profile-btn pb-cyan" id="btnShare"><div class="pb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div><div class="pb-title">SHARE</div><div class="pb-sub">INVITE</div></button>
+      </div>
+      <div class="section-title">SESSION</div>
+      <div class="profile-grid">
+        <button class="profile-btn pb-green" id="btnLoginProfile"><div class="pb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="pb-title">LOGIN</div><div class="pb-sub">ENTER</div></button>
+        <button class="profile-btn pb-red" id="btnLogout"><div class="pb-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div><div class="pb-title">LOGOUT</div><div class="pb-sub">EXIT</div></button>
+      </div>
+      <div class="list-item">
+        <div class="left"><span class="t">USER ID</span><span class="s" id="profileUid">-</span></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-referral">
+      <div class="section-title">REFERRAL PROGRAM</div>
+      <div class="info-box purple"><b>EARN ৳<span id="refBonusAmount">200</span> + 1 SPIN PER REFERRAL!</b> When your friend deposits, you get bonus + free spin.</div>
+      <div class="ref-stat-card">
+        <div class="stat-item"><div class="num" id="refCountDisplay">0</div><div class="lbl">REFERRED</div></div>
+        <div class="divider"></div>
+        <div class="stat-item"><div class="num" id="refEarningsDisplay">৳0</div><div class="lbl">EARNED</div></div>
+        <div class="divider"></div>
+        <div class="stat-item"><div class="num" id="refDepositedDisplay">0</div><div class="lbl">DEPOSITED</div></div>
+      </div>
+      <div class="form-group">
+        <label>YOUR REFERRAL CODE</label>
+        <input type="text" id="referralCode" readonly style="text-align:center;font-weight:900;color:var(--primary);font-size:14px;letter-spacing:2px;" />
+      </div>
+      <div class="ref-link-box">
+        <div class="rl-text" id="referralLink">Loading...</div>
+        <button class="rl-btn" id="copyReferralLinkBtn">📋 COPY</button>
+      </div>
+      <button class="btn" id="shareReferralBtn">📤 SHARE WITH FRIENDS</button>
+      <div class="section-title" style="margin-top:18px;">MY REFERRED USERS</div>
+      <div id="referredUsersList"><div class="empty">NO REFERRALS YET</div></div>
+    </section>
+
+    <section class="page" id="page-daily-bonus">
+      <div class="section-title">DAILY BONUS</div>
+      <div class="info-box green">🎁 CLAIM ৳<span id="dailyBonusAmt">5</span> EVERY DAY!</div>
+      <div class="wallet-card" style="background:linear-gradient(135deg,#f59e0b,#d97706);">
+        <div class="label" id="dailyBonusLabel">TODAY'S BONUS</div>
+        <div class="amount">৳ <span id="dailyBonusValue">5</span></div>
+        <button class="btn btn-success" id="claimDailyBtn" style="max-width:200px; margin:10px auto 0;">🎁 CLAIM NOW</button>
+        <div id="dailyBonusClaimedMsg" class="hidden" style="margin-top:10px; padding:8px 14px; background:rgba(255,255,255,0.25); border-radius:10px; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:6px; position:relative; z-index:1;">✅ ALREADY CLAIMED TODAY</div>
+      </div>
+      <div class="section-title">📅 THIS WEEK</div>
+      <div class="checkin-grid" id="dailyCheckinGrid"></div>
+    </section>
+
+    <section class="page" id="page-spin">
+      <div class="spin-page-hero">
+        <div class="sph-title">🎰 SPIN & WIN</div>
+        <div class="sph-sub">Win up to ৳150 instantly!</div>
+        <div class="spin-ticket-display">
+          <span class="std-count" id="spinTicketsCount">0</span>
+          <span class="std-label">FREE SPINS<br>AVAILABLE</span>
+        </div>
+      </div>
+      <div class="info-box purple">💡 EARN +1 SPIN PER DEPOSIT & PER REFERRAL!</div>
+      <div class="spin-wheel-container">
+        <div class="spin-frame">
+          <div class="spin-bulbs" id="spinBulbs"></div>
+          <div class="spin-pointer"></div>
+          <div class="spin-wheel-wrap">
+            <div class="spin-wheel" id="spinWheel"></div>
+          </div>
+          <div class="spin-wheel-center">🎰</div>
+        </div>
+        <div class="spin-btn-wrap">
+          <button class="spin-btn" id="spinBtn">🎰 SPIN NOW</button>
+        </div>
+        <div class="spin-status-box" id="spinStatusBox">
+          <span>🎁</span> <span id="spinStatus">Deposit or refer to get spins!</span>
+        </div>
+      </div>
+      <div class="section-title" style="margin-top:20px;">🎁 REWARD LIST</div>
+      <div class="spin-rewards-grid">
+        <div class="spin-reward-item"><div class="sr-label">COMMON</div><div class="sr-amount" style="color:#e2136e;">৳20</div></div>
+        <div class="spin-reward-item"><div class="sr-label">COMMON</div><div class="sr-amount" style="color:#f59e0b;">৳40</div></div>
+        <div class="spin-reward-item"><div class="sr-label">COMMON</div><div class="sr-amount" style="color:#2563eb;">৳50</div></div>
+        <div class="spin-reward-item"><div class="sr-label">COMMON</div><div class="sr-amount" style="color:#16a34a;">৳80</div></div>
+        <div class="spin-reward-item rare"><div class="sr-rare-badge">RARE</div><div class="sr-label">RARE</div><div class="sr-amount" style="color:#7c3aed;">৳100</div></div>
+        <div class="spin-reward-item rare"><div class="sr-rare-badge">RARE</div><div class="sr-label">RARE</div><div class="sr-amount" style="color:#ec1c24;">৳120</div></div>
+        <div class="spin-reward-item rare"><div class="sr-rare-badge">JACKPOT</div><div class="sr-label">JACKPOT</div><div class="sr-amount" style="color:#0d9488;">৳150</div></div>
+      </div>
+      <div class="section-title" style="margin-top:20px;">🏆 RECENT WINS</div>
+      <div id="winHistory"></div>
+    </section>
+
+    <section class="page" id="page-missions">
+      <div class="section-title">DAILY MISSIONS</div>
+      <div class="info-box blue">🎯 COMPLETE MISSIONS TO EARN EXTRA CASH!</div>
+      <div id="missionsList"></div>
+    </section>
+
+    <section class="page" id="page-checkin">
+      <div class="section-title">WEEKLY CHECK-IN</div>
+      <div class="info-box green">📅 CHECK IN 7 DAYS TO GET ৳50 BONUS!</div>
+      <div class="checkin-grid" id="weeklyCheckinGrid"></div>
+      <button class="btn btn-success" id="checkinBtn">✅ CHECK-IN TODAY</button>
+    </section>
+
+    <section class="page" id="page-leaderboard">
+      <div class="section-title">TOP EARNERS</div>
+      <div class="info-box purple">🏆 WEEKLY TOP EARNERS GET BONUS REWARDS!</div>
+      <div id="leaderboardList"><div class="empty">LOADING...</div></div>
+    </section>
+
+    <section class="page" id="page-vip">
+      <div class="section-title">VIP CLUB</div>
+      <div class="info-box" style="background:linear-gradient(135deg,#fef3c7,#fde68a); border-color:#fcd34d; color:#78350f;">👑 JOIN VIP CLUB TO UNLOCK PREMIUM BENEFITS!</div>
+      <div class="wallet-card" style="background:linear-gradient(135deg,#f59e0b,#d97706);">
+        <div class="label">YOUR VIP LEVEL</div>
+        <div class="amount" style="font-size:24px;">BRONZE</div>
+        <p style="font-size:10px; opacity:0.9; position:relative; z-index:1;">NEXT: SILVER (৳5000 MORE)</p>
+      </div>
+      <div class="settings-list">
+        <div class="settings-row"><div class="sr-left"><div class="sr-icon" style="background:linear-gradient(135deg,#fef3c7,#fde68a);">🎁</div><div class="sr-text"><div class="sr-title">DAILY BONUS ×2</div><div class="sr-sub">SILVER TIER</div></div></div><span style="color:#94a3b8;">🔒</span></div>
+        <div class="settings-row"><div class="sr-left"><div class="sr-icon" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0);">💰</div><div class="sr-text"><div class="sr-title">FASTER WITHDRAW</div><div class="sr-sub">GOLD TIER</div></div></div><span style="color:#94a3b8;">🔒</span></div>
+        <div class="settings-row"><div class="sr-left"><div class="sr-icon" style="background:linear-gradient(135deg,#dbeafe,#bfdbfe);">⚡</div><div class="sr-text"><div class="sr-title">EXTRA 5% RETURN</div><div class="sr-sub">PLATINUM TIER</div></div></div><span style="color:#94a3b8;">🔒</span></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-news">
+      <div class="section-title">LATEST NEWS</div>
+      <div id="newsList"></div>
+    </section>
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab active" data-page="home"><div class="tab-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="tab-label">HOME</div></button>
+    <button class="tab" data-page="referral"><div class="tab-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/></svg></div><div class="tab-label">REFER</div></button>
+    <button class="tab" data-page="spin"><div class="tab-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="tab-label">SPIN</div></button>
+    <button class="tab" data-page="wallet"><div class="tab-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div><div class="tab-label">WALLET</div></button>
+    <button class="tab" data-page="profile"><div class="tab-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="tab-label">PROFILE</div></button>
+  </nav>
+
+  <button class="support-float" onclick="document.getElementById('helpModal').classList.add('active')">💬</button>
+</div>
+
+<div class="banned-screen" id="bannedScreen">
+  <div class="banned-box">
+    <div class="icon">🚫</div>
+    <h1>ACCOUNT BANNED</h1>
+    <p>Your account has been banned by admin. Contact support.</p>
+    <button class="btn btn-danger" id="bannedLogoutBtn">LOGOUT</button>
+  </div>
+</div>
+
+<div class="win-popup" id="winPopup">
+  <div class="win-popup-box">
+    <div class="win-popup-emoji">🎉</div>
+    <div class="win-popup-title">CONGRATULATIONS!</div>
+    <div class="win-popup-amount"><span class="sym">৳</span><span id="winAmount">0</span></div>
+    <div class="win-popup-msg">YOU WON THIS PRIZE!</div>
+    <button class="win-popup-btn" id="winPopupClose">AWESOME! 🎉</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="loginModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div><div class="modal-title" id="loginModalTitle">LOGIN</div><div class="modal-sub" id="loginModalSub">ENTER YOUR ACCOUNT</div></div>
+      <button class="modal-close" id="closeLoginBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="login-avatar-wrap">
+        <div class="login-avatar guest" id="loginAvatar">
+          <div class="login-avatar-ring"></div>
+          <span>👤</span>
+        </div>
+      </div>
+      <div id="nameGroup" class="form-group hidden"><label>👤 YOUR NAME</label><input type="text" id="signupName" placeholder="Enter your name" /></div>
+      <div class="form-group"><label>📱 PHONE NUMBER</label><input type="tel" id="loginPhone" placeholder="01XXXXXXXXX" maxlength="11" /></div>
+      <div class="form-group"><label>🔒 PASSWORD</label><input type="password" id="loginPass" placeholder="••••••••" /></div>
+      <div id="refGroup" class="form-group hidden"><label>🎁 REFERRAL CODE (OPTIONAL)</label><input type="text" id="signupRef" placeholder="Referral code" /></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" id="loginSubmitBtn">🔐 LOGIN</button>
+      <button class="btn btn-soft mt-2" id="switchModeBtn">CREATE NEW ACCOUNT</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="editNameModal">
+  <div class="modal-box">
+    <div class="modal-header"><div><div class="modal-title">CHANGE NAME</div><div class="modal-sub">ENTER NEW NAME</div></div><button class="modal-close" id="closeEditNameBtn">✕</button></div>
+    <div class="modal-body"><div class="icon-circle icon-pink">✏️</div><div class="form-group"><label>NEW NAME</label><input type="text" id="editNameInput" placeholder="Your name" /></div></div>
+    <div class="modal-footer"><button class="btn" id="saveNameBtn">💾 SAVE</button><button class="btn btn-outline mt-2" id="cancelEditNameBtn">CANCEL</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="changePassModal">
+  <div class="modal-box">
+    <div class="modal-header"><div><div class="modal-title">CHANGE PASSWORD</div><div class="modal-sub">ENTER NEW PASSWORD</div></div><button class="modal-close" id="closeChangePassBtn">✕</button></div>
+    <div class="modal-body"><div class="icon-circle icon-blue">🔒</div><div class="form-group"><label>OLD PASSWORD</label><input type="password" id="oldPass" placeholder="••••••••" /></div><div class="form-group"><label>NEW PASSWORD</label><input type="password" id="newPass" placeholder="••••••••" /></div></div>
+    <div class="modal-footer"><button class="btn" id="changePassBtn">🔄 CHANGE</button><button class="btn btn-outline mt-2" id="cancelChangePassBtn">CANCEL</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="helpModal">
+  <div class="modal-box">
+    <div class="modal-header"><div><div class="modal-title">HELP CENTER</div><div class="modal-sub">WE'RE HERE TO HELP</div></div><button class="modal-close" id="closeHelpBtn">✕</button></div>
+    <div class="modal-body">
+      <div class="icon-circle icon-blue">❓</div>
+      <div style="font-size:11px;line-height:1.9;color:#334155;text-align:center;">
+        <b style="color:var(--primary);font-size:12px;">SUPPORT TEAM</b><br><br>
+        💬 <b>LIVE CHAT:</b> AVAILABLE 24/7<br>
+        📧 <b>EMAIL:</b> SUPPORT@BD.COM<br>
+        ⏰ <b>RESPONSE TIME:</b> WITHIN 2 HOURS<br><br>
+        <span style="color:#777;font-size:10px;">WE RESPOND TO ALL MESSAGES QUICKLY.</span>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" id="closeHelpFooterBtn">CLOSE</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="aboutModal">
+  <div class="modal-box">
+    <div class="modal-header"><div><div class="modal-title">ABOUT APP</div><div class="modal-sub">WINGOBD INVESTMENT</div></div><button class="modal-close" id="closeAboutBtn">✕</button></div>
+    <div class="modal-body">
+      <div class="icon-circle icon-pink">ℹ️</div>
+      <div style="font-size:11px;line-height:1.9;color:#334155;text-align:left;padding:0 4px;">
+        <p style="margin-bottom:10px;"><b style="color:var(--primary);">WINGOBD</b> IS A TRUSTED INVESTMENT PLATFORM THAT HELPS USERS GROW THEIR MONEY WITH DAILY RETURNS.</p>
+        <p style="margin-bottom:10px;">WE OFFER MULTIPLE PACKAGES STARTING FROM SMALL AMOUNTS WITH GUARANTEED DAILY PROFITS.</p>
+        <p style="margin-bottom:10px;">OUR PLATFORM IS SECURE, TRANSPARENT, AND TRUSTED BY THOUSANDS OF USERS ACROSS BANGLADESH.</p>
+        <p style="margin-bottom:10px;">WE PROVIDE INSTANT DEPOSIT, FAST WITHDRAWAL, AND 24/7 CUSTOMER SUPPORT.</p>
+        <p style="margin-bottom:10px;">EARN EXTRA THROUGH REFERRAL BONUSES, DAILY BONUSES, AND SPIN WHEEL REWARDS.</p>
+        <p style="margin-bottom:10px;">OUR MISSION IS TO MAKE INVESTMENT SIMPLE AND ACCESSIBLE FOR EVERYONE.</p>
+        <p>JOIN WINGOBD TODAY AND START EARNING FROM HOME!</p>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px dashed #cbd5e1;text-align:center;font-size:10px;color:#777;">
+          <b>VERSION:</b> 2.0.0<br>
+          <b>DEVELOPER:</b> WINGOBD TEAM
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" id="closeAboutFooterBtn">CLOSE</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="logoutModal">
+  <div class="modal-box">
+    <div class="modal-header"><div><div class="modal-title">LOGOUT?</div><div class="modal-sub">ARE YOU SURE?</div></div><button class="modal-close" id="closeLogoutBtn">✕</button></div>
+    <div class="modal-body"><div class="icon-circle icon-red">🚪</div><div style="text-align:center;color:var(--muted);font-size:11px;line-height:1.6;">REALLY WANT TO LOGOUT? YOU CAN LOGIN AGAIN ANYTIME.</div></div>
+    <div class="modal-footer" style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><button class="btn btn-outline" id="cancelLogoutBtn">CANCEL</button><button class="btn btn-danger" id="confirmLogoutBtn">LOGOUT</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-header"><div><div class="modal-title" id="confirmTitle">CONFIRM</div><div class="modal-sub" id="confirmSub">ARE YOU SURE?</div></div><button class="modal-close" id="closeConfirmBtn">✕</button></div>
+    <div class="modal-body"><div class="icon-circle" id="confirmIcon" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#b45309;">⚠️</div><div id="confirmMessage" style="text-align:center;color:#334155;font-size:11px;line-height:1.7;"></div></div>
+    <div class="modal-footer" style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><button class="btn btn-outline" id="confirmCancelBtn">CANCEL</button><button class="btn" id="confirmOkBtn">CONFIRM</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="infoModal">
+  <div class="modal-box">
+    <div class="modal-header"><div><div class="modal-title" id="infoTitle">INFO</div><div class="modal-sub" id="infoSub">-</div></div><button class="modal-close" id="closeInfoBtn">✕</button></div>
+    <div class="modal-body"><div class="icon-circle icon-blue" id="infoIcon">ℹ️</div><div id="infoMessage" style="text-align:center;color:#334155;font-size:11px;line-height:1.7;"></div></div>
+    <div class="modal-footer"><button class="btn" id="infoOkBtn">OK</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, push, update, onValue, off } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDYZeQsbcbNwKztZIbtx9f0R_nfjZSX01k",
+  authDomain: "bdhack-54132.firebaseapp.com",
+  databaseURL: "https://bdhack-54132-default-rtdb.firebaseio.com",
+  projectId: "bdhack-54132",
+  storageBucket: "bdhack-54132.firebasestorage.app",
+  messagingSenderId: "767198925219",
+  appId: "1:767198925219:web:a520f9a52c4146f1720a16",
+  measurementId: "G-TEFJ37XQ33"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+let currentPhone = null;
+let userData = {};
+let isSignupMode = false;
+let claimTimers = {};
+let cooldownTimerInterval = null;
+let referredUsersCache = [];
+
+let CLAIM_INTERVAL_MINUTES = 720;
+let CLAIM_INTERVAL = 720 * 60 * 1000;
+let REFERRAL_BONUS = 200;
+let MIN_DEPOSIT = 400;
+let MIN_WITHDRAW = 50;
+let WITHDRAW_COOLDOWN_MIN = 60;
+let DAILY_BONUS = 5;
+let MIN_REFERRALS_FOR_WITHDRAW = 2;
+let globalDefaultPic = '';
+
+let userUnsub = null;
+let depositsUnsub = null;
+let withdrawsUnsub = null;
+let pkgsUnsub = null;
+let nagadUnsub = null;
+
+const $ = (id) => document.getElementById(id);
+const toast = (msg, type = "") => { const t = $('toast'); t.textContent = msg; t.className = 'toast show ' + type; setTimeout(() => t.className = 'toast ' + type, 3000); };
+const fmt = (n) => Number(n || 0).toLocaleString('en-BD');
+const closeModal = (id) => { const el = $(id); if (el) el.classList.remove('active'); };
+window.closeModal = closeModal;
+
+async function copyText(text) {
+  if (!text || text === 'Loading...' || text === 'Not Set' || text === 'Login Required') { toast('Nothing to copy', 'error'); return false; }
+  try { if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; } } catch (e) {}
+  try { const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.top = '-9999px'; ta.setAttribute('readonly', ''); document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, 99999); const ok = document.execCommand('copy'); document.body.removeChild(ta); return ok; } catch (e) { return false; }
+}
+
+function getWorkingImageUrl(url) {
+  if (!url) return '';
+  url = url.trim();
+  if (url.includes('ibb.co') && !url.includes('i.ibb.co')) { const m = url.match(/ibb\.co(?:\.com)?\/([a-zA-Z0-9]+)/); if (m && m[1]) url = `https://i.ibb.co.com/${m[1]}/image.jpg`; }
+  if (url.includes('catbox.moe') && !url.includes('files.catbox.moe') && url.startsWith('https://catbox.moe/')) url = url.replace('https://catbox.moe/', 'https://files.catbox.moe/');
+  return url;
+}
+
+window.handleImgError = function(img) {
+  const orig = img.getAttribute('data-original-src') || img.src;
+  if (!img.hasAttribute('data-proxied') && orig) { img.setAttribute('data-proxied', 'true'); img.src = `https://wsrv.nl/?url=${encodeURIComponent(orig)}&w=800&output=webp&q=90`; }
+  else { img.onerror = null; if (img.parentElement.id === 'profileAvatar' || img.parentElement.id === 'navAvatar' || img.parentElement.id === 'loginAvatar') img.parentElement.innerHTML = '👤'; else { img.style.display = 'none'; if (img.parentElement.classList.contains('pkg-img-wrap')) img.parentElement.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#999;font-size:11px;">No Image</div>'; } }
+};
+
+function showConfirm(title, message, icon = '⚠️', iconStyle = 'background:linear-gradient(135deg,#fef3c7,#fde68a);color:#b45309;') {
+  return new Promise((resolve) => {
+    $('confirmTitle').textContent = title; $('confirmMessage').innerHTML = message; $('confirmIcon').textContent = icon;
+    $('confirmIcon').style.cssText = `width:52px;height:52px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:22px;${iconStyle}`;
+    $('confirmModal').classList.add('active');
+    const ok = $('confirmOkBtn'), cancel = $('confirmCancelBtn'), close = $('closeConfirmBtn');
+    const cleanup = () => { $('confirmModal').classList.remove('active'); ok.onclick = null; cancel.onclick = null; close.onclick = null; };
+    ok.onclick = () => { cleanup(); resolve(true); }; cancel.onclick = () => { cleanup(); resolve(false); }; close.onclick = () => { cleanup(); resolve(false); };
+  });
+}
+window.showConfirm = showConfirm;
+
+function showInfo(title, message, icon = 'ℹ️', iconStyle = 'background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#2563eb;') {
+  return new Promise((resolve) => {
+    $('infoTitle').textContent = title; $('infoSub').textContent = ''; $('infoMessage').innerHTML = message; $('infoIcon').textContent = icon;
+    $('infoIcon').style.cssText = `width:52px;height:52px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:22px;${iconStyle}`;
+    $('infoModal').classList.add('active');
+    const ok = $('infoOkBtn'), close = $('closeInfoBtn');
+    const cleanup = () => { $('infoModal').classList.remove('active'); ok.onclick = null; close.onclick = null; };
+    ok.onclick = () => { cleanup(); resolve(true); }; close.onclick = () => { cleanup(); resolve(true); };
+  });
+}
+window.showInfo = showInfo;
+
+function formatRemainTime(ms) {
+  if (ms <= 0) return 'now';
+  const m = Math.ceil(ms / 60000);
+  if (m < 60) return `${m} min`;
+  if (m < 1440) { const h = Math.floor(m / 60), r = m % 60; return r === 0 ? `${h}h` : `${h}h ${r}m`; }
+  const d = Math.floor(m / 1440), rm = m % 1440, h = Math.floor(rm / 60); return h === 0 ? `${d}d` : `${d}d ${h}h`;
+}
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = $('page-' + page);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.page === page));
+  closeMenu(); window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (page === 'referral') { loadReferralStats(); loadReferredUsers(); updateReferralLink(); }
+  if (page === 'daily-bonus') { renderDailyCheckin(); renderDailyBonusState(); }
+  if (page === 'checkin') renderWeeklyCheckin();
+  if (page === 'missions') renderMissions();
+  if (page === 'leaderboard') loadLeaderboard();
+  if (page === 'news') renderNews();
+  if (page === 'withdraw') updateWithdrawRequirement();
+  if (page === 'spin') updateSpinStatus();
+}
+window.showPage = showPage;
+
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => showPage(t.dataset.page)));
+document.querySelectorAll('.menu-card[data-page]').forEach(li => li.addEventListener('click', () => showPage(li.dataset.page)));
+
+const openMenu = () => { $('sidenav').classList.add('active'); $('overlay').classList.add('active'); };
+const closeMenu = () => { $('sidenav').classList.remove('active'); $('overlay').classList.remove('active'); };
+$('openMenu').addEventListener('click', openMenu);
+$('overlay').addEventListener('click', closeMenu);
+$('menuBackBtn').addEventListener('click', closeMenu);
+$('headerBalClick').addEventListener('click', () => { if (!currentPhone) openLoginModal(); else showPage('wallet'); });
+
+onValue(ref(db, 'adminSettings/claimIntervalMinutes'), (s) => { const m = Number(s.val()) || 720; if (m !== CLAIM_INTERVAL_MINUTES) { CLAIM_INTERVAL_MINUTES = m; CLAIM_INTERVAL = m * 60 * 1000; if (currentPhone && userData) renderMyPackages(); } });
+onValue(ref(db, 'adminSettings/referralBonus'), (s) => { REFERRAL_BONUS = Number(s.val()) || 200; ['refBonusAmount','refBonusAmount2'].forEach(id => { const el = $(id); if (el) el.textContent = fmt(REFERRAL_BONUS); }); });
+onValue(ref(db, 'adminSettings/minDeposit'), (s) => { MIN_DEPOSIT = Number(s.val()) || 400; const el = $('minDepositDisplay'); if (el) el.textContent = fmt(MIN_DEPOSIT); updateDepositHint(); });
+onValue(ref(db, 'adminSettings/minWithdraw'), (s) => { MIN_WITHDRAW = Number(s.val()) || 50; const el = $('minWithdrawDisplay'); if (el) el.textContent = fmt(MIN_WITHDRAW); });
+onValue(ref(db, 'adminSettings/withdrawCooldownMinutes'), (s) => { WITHDRAW_COOLDOWN_MIN = Number(s.val()) || 60; updateCooldownDisplay(); });
+onValue(ref(db, 'adminSettings/dailyBonus'), (s) => { DAILY_BONUS = Number(s.val()) || 5; ['dailyBonusAmt','dailyBonusValue'].forEach(id => { const el = $(id); if (el) el.textContent = fmt(DAILY_BONUS); }); });
+onValue(ref(db, 'adminSettings/minReferralsForWithdraw'), (s) => { MIN_REFERRALS_FOR_WITHDRAW = Number(s.val()) || 2; updateWithdrawRequirement(); });
+onValue(ref(db, 'adminSettings/defaultPhotoUrl'), (s) => { globalDefaultPic = s.val() || ''; if (currentPhone && userData) { renderAvatar(userData.photoUrl || null); } else updateLoginAvatar(); });
+onValue(ref(db, 'adminSettings/telegramLink'), (s) => {
+  const link = s.val(); const h = $('tgBtnHeader'), sn = $('tgBtnSidenav');
+  if (link && link.trim()) { h.href = link.trim(); h.classList.remove('hidden'); sn.href = link.trim(); sn.classList.remove('hidden'); }
+  else { h.classList.add('hidden'); sn.classList.add('hidden'); }
+});
+
+function updateDepositHint() {
+  const amt = Number($('depositAmount').value); const hint = $('depositHint'); if (!hint) return;
+  if (!amt) { hint.textContent = `MINIMUM ৳${fmt(MIN_DEPOSIT)} REQUIRED`; hint.className = 'input-hint'; }
+  else if (amt < MIN_DEPOSIT) { hint.textContent = `❌ MINIMUM ৳${fmt(MIN_DEPOSIT)} REQUIRED`; hint.className = 'input-hint warn'; }
+  else { hint.textContent = `✅ VALID AMOUNT`; hint.className = 'input-hint ok'; }
+}
+$('depositAmount').addEventListener('input', updateDepositHint);
+
+function updateCooldownDisplay() {
+  if (cooldownTimerInterval) { clearInterval(cooldownTimerInterval); cooldownTimerInterval = null; }
+  const box = $('cooldownInfo'), timerEl = $('cooldownTimer');
+  if (!currentPhone || !userData.lastWithdrawTime) { if(box) box.classList.add('hidden'); return; }
+  const update = () => {
+    const lastW = userData.lastWithdrawTime || 0; const now = Date.now(); const cdMs = WITHDRAW_COOLDOWN_MIN * 60 * 1000; const remain = lastW + cdMs - now;
+    if (remain > 0) { box.classList.remove('hidden'); timerEl.textContent = formatRemainTime(remain) + ' more'; }
+    else { box.classList.add('hidden'); if (cooldownTimerInterval) { clearInterval(cooldownTimerInterval); cooldownTimerInterval = null; } }
+  };
+  update(); cooldownTimerInterval = setInterval(update, 30000);
+}
+
+function getQualifiedReferralsCount() { return referredUsersCache.filter(u => u.hasDeposited === true).length; }
+
+function updateWithdrawRequirement() {
+  const box = $('withdrawReqBox'); if (!box) return;
+  if (!currentPhone) { box.classList.add('hidden'); return; }
+  box.classList.remove('hidden');
+  const qualified = getQualifiedReferralsCount();
+  const required = MIN_REFERRALS_FOR_WITHDRAW;
+  const canWithdraw = qualified >= required;
+  const reqTitle = $('reqTitle'), reqText = $('reqText'), reqProgressFill = $('reqProgressFill'), reqProgressText = $('reqProgressText');
+  const reqIcon = box.querySelector('.req-icon');
+  if (canWithdraw) {
+    box.classList.add('ok');
+    if (reqIcon) reqIcon.textContent = '✅';
+    if (reqTitle) reqTitle.textContent = 'WITHDRAW UNLOCKED';
+    if (reqText) reqText.innerHTML = `Great! You have <b>${qualified}/${required}</b> qualified referrals.`;
+    if (reqProgressFill) reqProgressFill.style.width = '100%';
+    if (reqProgressText) reqProgressText.textContent = `${qualified} / ${required}`;
+  } else {
+    box.classList.remove('ok');
+    if (reqIcon) reqIcon.textContent = '🔒';
+    if (reqTitle) reqTitle.textContent = 'WITHDRAW LOCKED';
+    if (reqText) reqText.innerHTML = `Refer <b>${required} friends</b> who deposit to unlock withdraw. Currently: ${qualified} deposited.`;
+    const pct = Math.min(100, (qualified / required) * 100);
+    if (reqProgressFill) reqProgressFill.style.width = pct + '%';
+    if (reqProgressText) reqProgressText.textContent = `${qualified} / ${required}`;
+  }
+}
+
+function updateLoginAvatar() {
+  const av = $('loginAvatar'); if (!av) return;
+  const photo = (currentPhone && userData.photoUrl) ? userData.photoUrl : (globalDefaultPic || '');
+  if (photo && photo.trim()) {
+    const url = getWorkingImageUrl(photo.trim());
+    av.innerHTML = `<div class="login-avatar-ring"></div><img src="${url}" data-original-src="${url}" alt="avatar" referrerpolicy="no-referrer" onerror="handleImgError(this)" />`;
+    av.classList.remove('guest');
+  } else {
+    av.innerHTML = `<div class="login-avatar-ring"></div><span style="font-size:32px;">👤</span>`;
+    av.classList.add('guest');
+  }
+}
+
+const openLoginModal = () => { isSignupMode = false; updateLoginModalUI(); updateLoginAvatar(); $('loginModal').classList.add('active'); closeMenu(); };
+$('loginMenuBtn').addEventListener('click', openLoginModal);
+$('btnLoginProfile').addEventListener('click', openLoginModal);
+$('closeLoginBtn').addEventListener('click', () => closeModal('loginModal'));
+
+function updateLoginModalUI() {
+  $('loginModalTitle').textContent = isSignupMode ? 'SIGN UP' : 'LOGIN';
+  $('loginModalSub').textContent = isSignupMode ? 'CREATE YOUR ACCOUNT' : 'ENTER YOUR ACCOUNT';
+  $('loginSubmitBtn').textContent = isSignupMode ? '📝 SIGN UP' : '🔐 LOGIN';
+  $('switchModeBtn').textContent = isSignupMode ? 'ALREADY HAVE ACCOUNT? LOGIN' : 'CREATE NEW ACCOUNT';
+  $('nameGroup').classList.toggle('hidden', !isSignupMode);
+  $('refGroup').classList.toggle('hidden', !isSignupMode);
+}
+$('switchModeBtn').addEventListener('click', () => { isSignupMode = !isSignupMode; updateLoginModalUI(); });
+
+const urlParams = new URLSearchParams(window.location.search);
+const refFromURL = urlParams.get('ref');
+if (refFromURL) {
+  setTimeout(() => {
+    const refInput = $('signupRef');
+    if (refInput) refInput.value = refFromURL.toUpperCase();
+    if (!currentPhone && !localStorage.getItem('wingobd_phone')) {
+      isSignupMode = true; updateLoginModalUI(); updateLoginAvatar();
+      $('loginModal').classList.add('active');
+    }
+  }, 500);
+}
+
+$('loginSubmitBtn').addEventListener('click', async () => {
+  const phone = $('loginPhone').value.trim(); const pass = $('loginPass').value;
+  const name = $('signupName').value.trim(); const refCode = $('signupRef').value.trim().toUpperCase();
+  if (!/^01\d{9}$/.test(phone)) return toast('Enter valid 11-digit number', 'error');
+  if (pass.length < 4) return toast('Password min 4 chars', 'error');
+  if (isSignupMode && !name) return toast('Enter your name', 'error');
+  try {
+    const usersSnap = await get(ref(db, 'users'));
+    let existingKey = null;
+    if (usersSnap.exists()) usersSnap.forEach(c => { if (c.val().phone === phone) existingKey = c.key; });
+    if (isSignupMode) {
+      if (existingKey) return toast('Phone already registered', 'error');
+      let referrerPhone = null;
+      if (refCode && usersSnap.exists()) {
+        usersSnap.forEach(c => { const u = c.val(); if (u.phone && u.phone.slice(-6).toUpperCase() === refCode) referrerPhone = u.phone; });
+        if (!referrerPhone) return toast('Invalid referral code', 'error');
+        if (referrerPhone === phone) return toast('Cannot use own code', 'error');
+      }
+      await set(ref(db, 'users/' + phone), { phone, password: pass, name, balance: 0, role: 'user', photoUrl: '', createdAt: Date.now(), referredBy: referrerPhone || null, isBanned: false, referralCount: 0, referralEarnings: 0, referralCode: phone.slice(-6).toUpperCase(), hasDeposited: false, spinTickets: 0 });
+      if (referrerPhone) {
+        const rSnap = await get(ref(db, 'users/' + referrerPhone));
+        const rData = rSnap.val();
+        await update(ref(db, 'users/' + referrerPhone), { referralCount: (rData.referralCount || 0) + 1 });
+      }
+      currentPhone = phone;
+      toast('✅ Account created', 'success');
+    } else {
+      if (!existingKey) return toast('Account not found', 'error');
+      const uSnap = await get(ref(db, 'users/' + existingKey));
+      const ud = uSnap.val();
+      if (ud.isBanned === true) { showBannedScreen(); return; }
+      if (ud.password !== pass) return toast('Wrong password', 'error');
+      currentPhone = ud.phone;
+      toast('✅ Login successful', 'success');
+    }
+    closeModal('loginModal');
+    $('loginPhone').value = ''; $('loginPass').value = ''; $('signupName').value = ''; $('signupRef').value = '';
+    localStorage.setItem('wingobd_phone', currentPhone);
+    sessionStorage.setItem('wingobd_phone', currentPhone);
+    loadUser(currentPhone);
+  } catch (e) { console.error(e); toast('Failed: ' + e.message, 'error'); }
+});
+
+function renderAvatar(photoUrl) {
+  const finalUrl = (photoUrl && photoUrl.trim()) ? photoUrl.trim() : (globalDefaultPic || '');
+  const pA = $('profileAvatar'), nA = $('navAvatar'), loginA = $('loginAvatar');
+  const html = finalUrl 
+    ? `<img src="${getWorkingImageUrl(finalUrl)}" data-original-src="${getWorkingImageUrl(finalUrl)}" alt="avatar" referrerpolicy="no-referrer" onerror="handleImgError(this)" />`
+    : '👤';
+  if (pA) { pA.innerHTML = html; pA.classList.toggle('guest', !finalUrl); }
+  if (nA) { nA.innerHTML = html; nA.classList.toggle('guest', !finalUrl); }
+  if (loginA) updateLoginAvatar();
+}
+
+function showBannedScreen() {
+  if (userUnsub) { userUnsub(); userUnsub = null; }
+  if (depositsUnsub) { depositsUnsub(); depositsUnsub = null; }
+  if (withdrawsUnsub) { withdrawsUnsub(); withdrawsUnsub = null; }
+  currentPhone = null; userData = {}; referredUsersCache = [];
+  localStorage.removeItem('wingobd_phone'); sessionStorage.removeItem('wingobd_phone');
+  $('bannedScreen').classList.add('active');
+}
+$('bannedLogoutBtn').addEventListener('click', () => { $('bannedScreen').classList.remove('active'); location.reload(); });
+
+function loadUser(phone) {
+  if (userUnsub) { userUnsub(); userUnsub = null; }
+  const userRef = ref(db, 'users/' + phone);
+  const unsub = onValue(userRef, (s) => {
+    if (!s.exists()) { logout(true); toast('Account deleted', 'error'); return; }
+    const ud = s.val();
+    if (ud.isBanned === true) { showBannedScreen(); return; }
+    userData = ud; currentPhone = phone;
+    localStorage.setItem('wingobd_phone', phone);
+    $('headerBalance').textContent = fmt(userData.balance);
+    $('walletBalance').textContent = fmt(userData.balance);
+    $('withdrawCurrentBal').textContent = fmt(userData.balance);
+    $('profileName').textContent = userData.name || 'User';
+    $('profilePhone').textContent = userData.phone || phone;
+    $('profileUid').textContent = phone;
+    $('navName').textContent = userData.name || 'User';
+    $('navPhone').textContent = phone;
+    $('loginMenuBtn').classList.add('hidden');
+    $('logoutBtn').classList.remove('hidden');
+    $('vipBadgeHeader').classList.remove('hidden');
+    $('vipBadgeSidenav').classList.remove('hidden');
+    renderAvatar(userData.photoUrl || null);
+    renderMyPackages();
+    updateCooldownDisplay();
+    $('homeDailyBanner').classList.remove('hidden');
+    loadReferralStats();
+    updateReferralLink();
+    loadReferredUsers();
+    renderDailyBonusState();
+    updateSpinStatus();
+  });
+  userUnsub = () => off(userRef, 'value', unsub);
+  loadMyDeposits(); loadMyWithdraws();
+}
+
+const logout = (silent = false) => {
+  if (userUnsub) { userUnsub(); userUnsub = null; }
+  if (depositsUnsub) { depositsUnsub(); depositsUnsub = null; }
+  if (withdrawsUnsub) { withdrawsUnsub(); withdrawsUnsub = null; }
+  if (cooldownTimerInterval) { clearInterval(cooldownTimerInterval); cooldownTimerInterval = null; }
+  Object.values(claimTimers).forEach(t => clearInterval(t)); claimTimers = {};
+  currentPhone = null; userData = {}; referredUsersCache = [];
+  localStorage.removeItem('wingobd_phone'); sessionStorage.removeItem('wingobd_phone');
+  $('headerBalance').textContent = '0'; $('walletBalance').textContent = '0'; $('withdrawCurrentBal').textContent = '0';
+  $('profileName').textContent = 'GUEST'; $('profilePhone').textContent = 'NOT LOGGED IN';
+  $('profileUid').textContent = '-'; $('navName').textContent = 'GUEST'; $('navPhone').textContent = 'NOT LOGGED IN';
+  $('loginMenuBtn').classList.remove('hidden'); $('logoutBtn').classList.add('hidden');
+  $('vipBadgeHeader').classList.add('hidden'); $('vipBadgeSidenav').classList.add('hidden');
+  $('myPackages').innerHTML = '<div class="empty">LOGIN REQUIRED</div>';
+  $('depositHistory').innerHTML = '<div class="empty">LOGIN REQUIRED</div>';
+  $('withdrawHistory').innerHTML = '<div class="empty">LOGIN REQUIRED</div>';
+  $('activeCount').textContent = '0'; $('totalInvested').textContent = '0'; $('totalEarned').textContent = '0';
+  $('cooldownInfo').classList.add('hidden'); $('homeDailyBanner').classList.add('hidden');
+  renderAvatar(null);
+  if (!silent) toast('Logged out', 'success');
+  showPage('home');
+};
+
+const openLogoutModal = () => { if (!currentPhone) return toast('Not logged in', 'error'); $('logoutModal').classList.add('active'); };
+$('logoutBtn').addEventListener('click', openLogoutModal);
+$('btnLogout').addEventListener('click', openLogoutModal);
+$('confirmLogoutBtn').addEventListener('click', () => { closeModal('logoutModal'); logout(); });
+$('cancelLogoutBtn').addEventListener('click', () => closeModal('logoutModal'));
+$('closeLogoutBtn').addEventListener('click', () => closeModal('logoutModal'));
+
+$('btnEditName').addEventListener('click', () => { if (!currentPhone) return toast('Login first', 'error'); $('editNameInput').value = userData.name || ''; $('editNameModal').classList.add('active'); });
+$('saveNameBtn').addEventListener('click', async () => { const name = $('editNameInput').value.trim(); if (!name) return toast('Enter name', 'error'); await update(ref(db, 'users/' + currentPhone), { name }); toast('Name saved', 'success'); closeModal('editNameModal'); });
+$('closeEditNameBtn').addEventListener('click', () => closeModal('editNameModal'));
+$('cancelEditNameBtn').addEventListener('click', () => closeModal('editNameModal'));
+
+$('btnChangePass').addEventListener('click', () => { if (!currentPhone) return toast('Login first', 'error'); $('oldPass').value = ''; $('newPass').value = ''; $('changePassModal').classList.add('active'); });
+$('changePassBtn').addEventListener('click', async () => {
+  const oldP = $('oldPass').value, newP = $('newPass').value;
+  if (oldP !== userData.password) return toast('Old password wrong', 'error');
+  if (newP.length < 4) return toast('New password min 4 chars', 'error');
+  await update(ref(db, 'users/' + currentPhone), { password: newP });
+  toast('Password changed', 'success'); closeModal('changePassModal');
+});
+$('closeChangePassBtn').addEventListener('click', () => closeModal('changePassModal'));
+$('cancelChangePassBtn').addEventListener('click', () => closeModal('changePassModal'));
+
+$('btnGoDeposit').addEventListener('click', () => showPage('deposit'));
+$('btnGoWithdraw').addEventListener('click', () => { if (!currentPhone) return openLoginModal(); showPage('withdraw'); });
+
+async function loadReferralStats() {
+  if (!currentPhone) return;
+  const cntEl = $('refCountDisplay'); if (cntEl) cntEl.textContent = userData.referralCount || 0;
+  const eEl = $('refEarningsDisplay'); if (eEl) eEl.textContent = '৳' + fmt(userData.referralEarnings || 0);
+  const depEl = $('refDepositedDisplay'); if (depEl) depEl.textContent = getQualifiedReferralsCount();
+  const code = userData.referralCode || currentPhone.slice(-6).toUpperCase();
+  const refCodeEl = $('referralCode'); if (refCodeEl) refCodeEl.value = code;
+}
+
+function updateReferralLink() {
+  if (!currentPhone) { const el = $('referralLink'); if (el) el.textContent = 'LOGIN TO GET YOUR LINK'; return; }
+  const code = userData.referralCode || currentPhone.slice(-6).toUpperCase();
+  const base = window.location.origin + window.location.pathname;
+  const link = `${base}?ref=${code}`;
+  const el = $('referralLink'); if (el) el.textContent = link;
+}
+
+async function loadReferredUsers() {
+  if (!currentPhone) { const box = $('referredUsersList'); if(box) box.innerHTML = '<div class="empty">LOGIN REQUIRED</div>'; referredUsersCache = []; updateWithdrawRequirement(); return; }
+  const box = $('referredUsersList');
+  const snap = await get(ref(db, 'users'));
+  if (!snap.exists()) { if(box) box.innerHTML = '<div class="empty">NO REFERRALS YET</div>'; referredUsersCache = []; updateWithdrawRequirement(); return; }
+  const list = [];
+  snap.forEach(c => { const u = c.val(); if (u.referredBy === currentPhone) list.push(u); });
+  referredUsersCache = list;
+  if (box) {
+    if (!list.length) box.innerHTML = '<div class="empty">NO REFERRALS YET</div>';
+    else box.innerHTML = list.map(u => `
+      <div class="leaderboard-item">
+        <div class="rank">👤</div>
+        <div class="lb-info"><div class="lb-name">${u.name || 'USER'}</div><div class="lb-amount">${u.phone} • ৳${fmt(u.balance)}</div></div>
+        <span class="badge ${u.hasDeposited ? 'approved' : 'pending'}">${u.hasDeposited ? 'DEPOSITED' : 'PENDING'}</span>
+      </div>`).join('');
+  }
+  loadReferralStats();
+  updateWithdrawRequirement();
+}
+
+$('copyReferralLinkBtn').addEventListener('click', async () => {
+  const link = $('referralLink').textContent;
+  const ok = await copyText(link);
+  toast(ok ? '✅ Link copied' : 'Copy failed', ok ? 'success' : 'error');
+});
+
+$('shareReferralBtn').addEventListener('click', () => {
+  if (!currentPhone) return toast('Login first', 'error');
+  const link = $('referralLink').textContent;
+  const code = userData.referralCode || currentPhone.slice(-6).toUpperCase();
+  const text = `Join Money Game Bd with my code ${code} and start earning!\n${link}`;
+  if (navigator.share) navigator.share({ title: 'Money Game Bd', text, url: link }).catch(() => {});
+  else copyText(text).then(ok => toast(ok ? 'Copied' : 'Share failed', ok ? 'success' : 'error'));
+});
+
+$('btnHelp').addEventListener('click', () => $('helpModal').classList.add('active'));
+$('btnAbout').addEventListener('click', () => $('aboutModal').classList.add('active'));
+$('closeHelpBtn').addEventListener('click', () => closeModal('helpModal'));
+$('closeHelpFooterBtn').addEventListener('click', () => closeModal('helpModal'));
+$('closeAboutBtn').addEventListener('click', () => closeModal('aboutModal'));
+$('closeAboutFooterBtn').addEventListener('click', () => closeModal('aboutModal'));
+$('menuHelp').addEventListener('click', () => { $('helpModal').classList.add('active'); closeMenu(); });
+$('menuAbout').addEventListener('click', () => { $('aboutModal').classList.add('active'); closeMenu(); });
+
+const shareApp = () => { const text = 'Money Game Bd - Safe investment platform. Join now!'; if (navigator.share) navigator.share({ title: 'Money Game Bd', text }).catch(() => {}); else copyText(text).then(ok => toast(ok ? 'Copied' : 'Failed', ok ? 'success' : 'error')); };
+$('btnShare').addEventListener('click', shareApp);
+$('menuShare').addEventListener('click', shareApp);
+
+function loadPackages() {
+  if (pkgsUnsub) { pkgsUnsub(); pkgsUnsub = null; }
+  const grid = $('pkgGrid'); const pkgsRef = ref(db, 'packages');
+  const unsub = onValue(pkgsRef, (snap) => {
+    grid.innerHTML = '';
+    if (!snap.exists()) { grid.innerHTML = '<div class="empty">NO PACKAGES YET</div>'; return; }
+    const items = []; snap.forEach(c => { const p = c.val(); if (p.isActive !== false) items.push({ key: c.key, ...p }); });
+    if (!items.length) { grid.innerHTML = '<div class="empty">NO PACKAGES YET</div>'; return; }
+    items.forEach(p => {
+      const div = document.createElement('div'); div.className = 'pkg-card';
+      const imgUrl = getWorkingImageUrl((p.imageUrl && p.imageUrl.trim()) ? p.imageUrl.trim() : '');
+      const hdUrl = imgUrl ? `https://wsrv.nl/?url=${encodeURIComponent(imgUrl)}&w=1200&output=webp&q=95` : '';
+      const imgHtml = imgUrl ? `<div class="pkg-img-wrap"><img class="pkg-img" src="${hdUrl}" data-original-src="${imgUrl}" alt="pkg" loading="lazy" referrerpolicy="no-referrer" onerror="handleImgError(this)" /></div>` : `<div class="pkg-img-wrap"><div style="display:flex;align-items:center;justify-content:center;height:100%;color:#999;font-size:11px;">No Image</div></div>`;
+      div.innerHTML = `<div class="pkg-inner">${imgHtml}<div class="pkg-stock-badge">IN STOCK</div><div class="pkg-ribbon">HOT</div><div class="pkg-body"><div class="pkg-title">${p.title || 'PACKAGE'}</div><div class="pkg-info-row"><div class="pkg-price"><span class="currency">৳</span>${fmt(p.price)}</div><div class="pkg-return">DAILY ৳${fmt(p.dailyReturn)}</div></div><div class="pkg-duration">📅 DURATION: ${p.durationDays} DAYS</div><button class="pkg-buy-btn" data-buy="${p.key}">🛒 BUY NOW</button></div></div>`;
+      grid.appendChild(div);
+    });
+    grid.querySelectorAll('[data-buy]').forEach(b => b.addEventListener('click', () => buyPackage(b.dataset.buy)));
+  });
+  pkgsUnsub = () => off(pkgsRef, 'value', unsub);
+}
+
+async function buyPackage(pkgId) {
+  if (!currentPhone) return openLoginModal();
+  const snap = await get(ref(db, 'packages/' + pkgId));
+  if (!snap.exists()) return toast('Package not found', 'error');
+  const pkg = snap.val();
+  if (pkg.isActive === false) return toast('Package disabled', 'error');
+  if ((userData.balance || 0) < pkg.price) return toast('Insufficient balance', 'error');
+  const ok = await showConfirm('BUY PACKAGE', `<div style="font-size:12px;line-height:1.8;">📦 <b>${pkg.title}</b><br>💵 PRICE: <b style="color:var(--primary);">৳${fmt(pkg.price)}</b><br>📅 DURATION: ${pkg.durationDays} DAYS<br>💰 DAILY: ৳${fmt(pkg.dailyReturn)}</div>`, '🛒', 'background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#2563eb;');
+  if (!ok) return;
+  const key = push(ref(db, 'users/' + currentPhone + '/activePackages')).key;
+  const now = Date.now();
+  await update(ref(db), { [`users/${currentPhone}/balance`]: (userData.balance || 0) - pkg.price, [`users/${currentPhone}/activePackages/${key}`]: { packageId: pkgId, title: pkg.title, purchaseTime: now, dailyAmount: pkg.dailyReturn, remainingDays: pkg.durationDays, totalDays: pkg.durationDays, lastClaimTime: 0 } });
+  toast('✅ Purchase successful', 'success');
+}
+
+function getClaimStatus(p) {
+  const now = Date.now();
+  const base = (!p.lastClaimTime || p.lastClaimTime === 0) ? (p.purchaseTime || 0) : p.lastClaimTime;
+  const nextClaim = base + CLAIM_INTERVAL;
+  if (now >= nextClaim) return { claimable: true, msg: 'Claim Now' };
+  return { claimable: false, msg: formatRemain(nextClaim - now) };
+}
+
+function formatRemain(ms) {
+  const m = Math.ceil(ms / 60000);
+  if (m < 60) return `${m} MIN LEFT`;
+  const h = Math.floor(m / 60), r = m % 60;
+  if (r === 0) return `${h}H LEFT`;
+  return `${h}H ${r}M LEFT`;
+}
+
+function formatIntervalText() {
+  if (CLAIM_INTERVAL_MINUTES < 60) return `${CLAIM_INTERVAL_MINUTES} MIN`;
+  if (CLAIM_INTERVAL_MINUTES % 60 === 0) return `${CLAIM_INTERVAL_MINUTES / 60}H`;
+  return `${(CLAIM_INTERVAL_MINUTES / 60).toFixed(1)}H`;
+}
+
+function renderMyPackages() {
+  const box = $('myPackages');
+  if (!currentPhone) { box.innerHTML = '<div class="empty">LOGIN REQUIRED</div>'; ['activeCount','totalInvested','totalEarned'].forEach(id => $(id).textContent = '0'); return; }
+  const list = userData.activePackages || {}; const keys = Object.keys(list);
+  let active = 0, inv = 0, earn = 0; box.innerHTML = '';
+  if (!keys.length) { box.innerHTML = '<div class="empty">NO PACKAGES</div>'; return; }
+  keys.forEach(k => {
+    const p = list[k];
+    if ((p.remainingDays || 0) <= 0) return;
+    active++; inv += (p.dailyAmount || 0) * (p.totalDays || 0); earn += (p.dailyAmount || 0) * ((p.totalDays || 0) - (p.remainingDays || 0));
+    const status = getClaimStatus(p);
+    const div = document.createElement('div'); div.className = 'list-item';
+    const btn = status.claimable ? `<button class="badge-claim-btn" data-claim="${k}">🎁 CLAIM ৳${fmt(p.dailyAmount)}</button>` : `<span class="badge pending" data-timer="${k}">⏳ ${status.msg}</span>`;
+    div.innerHTML = `<div class="left"><span class="t">${p.title}</span><span class="s">DAILY ৳${fmt(p.dailyAmount)} • ${p.remainingDays} DAYS</span><span class="s" style="font-size:8px;">EVERY ${formatIntervalText()}</span></div>${btn}`;
+    box.appendChild(div);
+    if (!status.claimable) {
+      if (claimTimers[k]) clearInterval(claimTimers[k]);
+      claimTimers[k] = setInterval(() => {
+        const s2 = getClaimStatus(p); const el = box.querySelector(`[data-timer="${k}"]`);
+        if (el) { if (s2.claimable) { clearInterval(claimTimers[k]); renderMyPackages(); } else { el.textContent = '⏳ ' + s2.msg; } }
+      }, 10000);
+    }
+  });
+  if (active === 0) box.innerHTML = '<div class="empty">NO ACTIVE PACKAGES</div>';
+  box.querySelectorAll('[data-claim]').forEach(b => b.addEventListener('click', () => claimPayout(b.dataset.claim)));
+  $('activeCount').textContent = active; $('totalInvested').textContent = fmt(inv); $('totalEarned').textContent = fmt(earn);
+}
+
+async function claimPayout(pkgKey) {
+  if (!currentPhone) return toast('Login first', 'error');
+  const pkgRef = ref(db, `users/${currentPhone}/activePackages/${pkgKey}`);
+  const snap = await get(pkgRef);
+  if (!snap.exists()) return toast('Package not found', 'error');
+  const p = snap.val(); const status = getClaimStatus(p);
+  if (!status.claimable) return toast('Not yet time', 'error');
+  if ((p.remainingDays || 0) <= 0) return toast('Expired', 'error');
+  const amount = Number(p.dailyAmount) || 0;
+  await update(ref(db), { [`users/${currentPhone}/balance`]: (userData.balance || 0) + amount, [`users/${currentPhone}/activePackages/${pkgKey}/lastClaimTime`]: Date.now(), [`users/${currentPhone}/activePackages/${pkgKey}/remainingDays`]: (p.remainingDays || 0) - 1 });
+  toast(`✅ ৳${fmt(amount)} claimed`, 'success');
+}
+
+$('submitDeposit').addEventListener('click', async () => {
+  if (!currentPhone) return openLoginModal();
+  const amount = Number($('depositAmount').value); const trx = $('depositTrx').value.trim();
+  if (!amount || amount < MIN_DEPOSIT) return showInfo('AMOUNT TOO LOW', `MINIMUM <b style="color:var(--primary);">৳${fmt(MIN_DEPOSIT)}</b> REQUIRED.`, '⚠️', 'background:linear-gradient(135deg,#fee2e2,#fecaca);color:#dc2626;');
+  if (!trx) return toast('Enter TrxID', 'error');
+  const allDep = await get(ref(db, 'depositRequests'));
+  if (allDep.exists()) { let dup = false; allDep.forEach(c => { const d = c.val(); if (d.trxId && d.trxId.toLowerCase() === trx.toLowerCase()) dup = true; }); if (dup) return toast('TrxID already used', 'error'); }
+  const key = push(ref(db, 'depositRequests')).key;
+  await set(ref(db, 'depositRequests/' + key), { uid: currentPhone, phone: currentPhone, name: userData.name, amount, trxId: trx, method: 'nagad', status: 'pending', timestamp: Date.now() });
+  const newSpinTickets = (userData.spinTickets || 0) + 1;
+  const updates = { [`users/${currentPhone}/spinTickets`]: newSpinTickets };
+  if (!userData.hasDeposited && userData.referredBy) {
+    const rSnap = await get(ref(db, 'users/' + userData.referredBy));
+    if (rSnap.exists()) {
+      const rData = rSnap.val();
+      updates[`users/${userData.referredBy}/balance`] = (rData.balance || 0) + REFERRAL_BONUS;
+      updates[`users/${userData.referredBy}/referralEarnings`] = (rData.referralEarnings || 0) + REFERRAL_BONUS;
+      updates[`users/${userData.referredBy}/spinTickets`] = (rData.spinTickets || 0) + 1;
+    }
+    updates[`users/${currentPhone}/hasDeposited`] = true;
+  }
+  await update(ref(db), updates);
+  $('depositAmount').value = ''; $('depositTrx').value = ''; updateDepositHint();
+  showInfo('DEPOSIT REQUEST SENT', `৳${fmt(amount)} DEPOSIT REQUEST SENT.<br><br><b style="color:var(--primary);">🎫 +1 FREE SPIN EARNED!</b>`, '✅', 'background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:#15803d;');
+});
+
+function loadMyDeposits() {
+  if (!currentPhone) return;
+  if (depositsUnsub) { depositsUnsub(); depositsUnsub = null; }
+  const box = $('depositHistory'); const dRef = ref(db, 'depositRequests');
+  const unsub = onValue(dRef, (snap) => {
+    box.innerHTML = '';
+    if (!snap.exists()) {
+      box.innerHTML = `<div class="deposit-empty"><div class="deposit-empty-icon">📭</div><div class="deposit-empty-title">NO DEPOSITS YET</div><div class="deposit-empty-sub">YOUR DEPOSIT HISTORY WILL APPEAR HERE</div></div>`;
+      return;
+    }
+    const arr = []; snap.forEach(c => { const d = c.val(); if (d.uid === currentPhone) arr.push(d); }); arr.sort((a, b) => b.timestamp - a.timestamp);
+    if (!arr.length) {
+      box.innerHTML = `<div class="deposit-empty"><div class="deposit-empty-icon">📭</div><div class="deposit-empty-title">NO DEPOSITS YET</div><div class="deposit-empty-sub">YOUR DEPOSIT HISTORY WILL APPEAR HERE</div></div>`;
+      return;
+    }
+    arr.forEach(d => {
+      const div = document.createElement('div');
+      div.className = `deposit-history-item ${d.status}`;
+      const icon = d.status === 'pending' ? '⏳' : (d.status === 'approved' ? '✅' : '❌');
+      const dateStr = new Date(d.timestamp).toLocaleString('en-BD', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      div.innerHTML = `
+        <div class="deposit-history-icon">${icon}</div>
+        <div class="deposit-history-body">
+          <div class="deposit-history-amount">৳ ${fmt(d.amount)}</div>
+          <div class="deposit-history-meta">TRXID: ${d.trxId} • ${dateStr}</div>
+        </div>
+        <span class="deposit-history-badge ${d.status}">${d.status === 'pending' ? 'PENDING' : d.status === 'approved' ? 'APPROVED' : 'REJECTED'}</span>
+      `;
+      box.appendChild(div);
+    });
+  });
+  depositsUnsub = () => off(dRef, 'value', unsub);
+}
+
+$('submitWithdraw').addEventListener('click', async () => {
+  if (!currentPhone) return openLoginModal();
+  const qualified = getQualifiedReferralsCount();
+  if (qualified < MIN_REFERRALS_FOR_WITHDRAW) {
+    const need = MIN_REFERRALS_FOR_WITHDRAW - qualified;
+    return showInfo('WITHDRAW LOCKED 🔒', `<div style="line-height:1.8;">YOU NEED <b style="color:var(--primary);">${MIN_REFERRALS_FOR_WITHDRAW} QUALIFIED REFERRALS</b>.<br><br><div style="background:#fee2e2; border-radius:10px; padding:12px; margin:10px 0;"><div style="font-size:11px; color:#7f1d1d; font-weight:700;">PROGRESS</div><div style="font-size:22px; color:#dc2626; font-weight:900; margin:4px 0;">${qualified} / ${MIN_REFERRALS_FOR_WITHDRAW}</div></div><button onclick="closeModal('infoModal'); showPage('referral');" style="background:var(--grad-primary); color:#fff; border:none; padding:10px 20px; border-radius:10px; font-family:inherit; font-weight:800; font-size:12px; cursor:pointer; margin-top:6px; text-transform:uppercase;">📤 INVITE FRIENDS NOW</button></div>`, '🔒', 'background:linear-gradient(135deg,#fee2e2,#fecaca);color:#dc2626;');
+  }
+  const num = $('withdrawNumber').value.trim(); const amount = Number($('withdrawAmount').value);
+  if (!/^01\d{9}$/.test(num)) return toast('Valid 11-digit number required', 'error');
+  if (!amount || amount < MIN_WITHDRAW) return showInfo('AMOUNT TOO LOW', `MINIMUM <b style="color:var(--primary);">৳${fmt(MIN_WITHDRAW)}</b> REQUIRED.`, '⚠️', 'background:linear-gradient(135deg,#fee2e2,#fecaca);color:#dc2626;');
+  if ((userData.balance || 0) < amount) return toast('Insufficient balance', 'error');
+  const lastW = userData.lastWithdrawTime || 0; const now = Date.now();
+  if (lastW && (now - lastW) < WITHDRAW_COOLDOWN_MIN * 60 * 1000) { const remain = WITHDRAW_COOLDOWN_MIN * 60 * 1000 - (now - lastW); return showInfo('COOLDOWN ACTIVE', `NEXT WITHDRAW IN <b>${formatRemainTime(remain)}</b>.`, '⏳', 'background:linear-gradient(135deg,#fef3c7,#fde68a);color:#b45309;'); }
+  const ok = await showConfirm('CONFIRM WITHDRAW', `YOU ARE WITHDRAWING <b style="color:var(--primary);font-size:15px;">৳${fmt(amount)}</b>.<br><br>💳 NAGAD: <b>${num}</b>`, '💸', 'background:linear-gradient(135deg,#fee2e2,#fecaca);color:#dc2626;');
+  if (!ok) return;
+  await update(ref(db, 'users/' + currentPhone), { balance: (userData.balance || 0) - amount, lastWithdrawTime: now });
+  const key = push(ref(db, 'withdrawRequests')).key;
+  await set(ref(db, 'withdrawRequests/' + key), { uid: currentPhone, phone: currentPhone, name: userData.name, amount, accountNumber: num, method: 'nagad', status: 'pending', timestamp: now });
+  $('withdrawNumber').value = ''; $('withdrawAmount').value = '';
+  showInfo('WITHDRAW SENT', `৳${fmt(amount)} WITHDRAW REQUEST SENT.`, '✅', 'background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:#15803d;');
+});
+
+function loadMyWithdraws() {
+  if (!currentPhone) return;
+  if (withdrawsUnsub) { withdrawsUnsub(); withdrawsUnsub = null; }
+  const box = $('withdrawHistory'); const wRef = ref(db, 'withdrawRequests');
+  const unsub = onValue(wRef, (snap) => {
+    box.innerHTML = ''; if (!snap.exists()) { box.innerHTML = '<div class="empty">NO WITHDRAWS</div>'; return; }
+    const arr = []; snap.forEach(c => { const d = c.val(); if (d.uid === currentPhone) arr.push(d); }); arr.sort((a, b) => b.timestamp - a.timestamp);
+    if (!arr.length) { box.innerHTML = '<div class="empty">NO WITHDRAWS</div>'; return; }
+    arr.forEach(d => { const div = document.createElement('div'); div.className = 'list-item'; div.innerHTML = `<div class="left"><span class="t">৳ ${fmt(d.amount)}</span><span class="s">NUMBER: ${d.accountNumber}</span></div><span class="badge ${d.status}">${d.status === 'pending' ? 'PENDING' : d.status === 'approved' ? 'APPROVED' : 'REJECTED'}</span>`; box.appendChild(div); });
+  });
+  withdrawsUnsub = () => off(wRef, 'value', unsub);
+}
+
+function loadNagadNumber() {
+  if (nagadUnsub) { nagadUnsub(); nagadUnsub = null; }
+  const nRef = ref(db, 'adminSettings/nagadNumber');
+  const unsub = onValue(nRef, (s) => { const n = s.val() || 'NOT SET'; $('nagadNumber').textContent = n; });
+  nagadUnsub = () => off(nRef, 'value', unsub);
+}
+
+$('copyNagadBtn').addEventListener('click', async () => {
+  const ok = await copyText($('nagadNumber').textContent);
+  toast(ok ? '✅ Copied' : 'Copy failed', ok ? 'success' : 'error');
+});
+
+function renderDailyBonusState() {
+  if (!currentPhone) return;
+  const today = new Date().toISOString().split('T')[0];
+  const claimed = userData.lastDailyBonus === today;
+  const btn = $('claimDailyBtn'), msg = $('dailyBonusClaimedMsg'), label = $('dailyBonusLabel');
+  if (claimed) { if (btn) { btn.disabled = true; btn.style.display = 'none'; } if (msg) msg.classList.remove('hidden'); if (label) label.textContent = 'BONUS CLAIMED ✓'; }
+  else { if (btn) { btn.disabled = false; btn.style.display = 'flex'; btn.textContent = '🎁 CLAIM NOW'; } if (msg) msg.classList.add('hidden'); if (label) label.textContent = "TODAY'S BONUS"; }
+}
+
+$('claimDailyBtn').addEventListener('click', async () => {
+  if (!currentPhone) return openLoginModal();
+  const today = new Date().toISOString().split('T')[0];
+  if (userData.lastDailyBonus === today) return toast('Already claimed today', 'error');
+  const btn = $('claimDailyBtn');
+  btn.disabled = true; btn.textContent = 'CLAIMING...';
+  try {
+    await update(ref(db, 'users/' + currentPhone), { balance: (userData.balance || 0) + DAILY_BONUS, lastDailyBonus: today });
+    toast(`✅ ৳${fmt(DAILY_BONUS)} bonus claimed!`, 'success');
+    renderDailyBonusState(); renderDailyCheckin();
+  } catch (e) { btn.disabled = false; btn.textContent = '🎁 CLAIM NOW'; toast('Failed: ' + e.message, 'error'); }
+});
+
+function renderDailyCheckin() {
+  const grid = $('dailyCheckinGrid'); if (!grid) return;
+  const days = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
+  const today = new Date(); const dow = (today.getDay() + 6) % 7;
+  const todayStr = today.toISOString().split('T')[0];
+  const claimedToday = userData?.lastDailyBonus === todayStr;
+  grid.innerHTML = days.map((d, i) => {
+    const isPast = i < dow;
+    const isToday = i === dow;
+    const cls = isPast ? 'claimed' : (isToday && !claimedToday ? 'today' : (isToday && claimedToday ? 'claimed' : ''));
+    return `<div class="checkin-day ${cls}">${d}</div>`;
+  }).join('');
+}
+
+const SPIN_REWARDS = [
+  { amt: 20,  color: '#e2136e' },
+  { amt: 40,  color: '#f59e0b' },
+  { amt: 50,  color: '#2563eb' },
+  { amt: 80,  color: '#16a34a' },
+  { amt: 100, color: '#7c3aed' },
+  { amt: 120, color: '#ec1c24' },
+  { amt: 150, color: '#0d9488' }
+];
+const SPIN_WEIGHTS = [35, 25, 20, 12, 5, 2.5, 0.5];
+
+function buildSpinBulbs() {
+  const bulbs = $('spinBulbs'); if (!bulbs) return;
+  bulbs.innerHTML = '';
+  const count = 20;
+  for (let i = 0; i < count; i++) {
+    const angle = (i / count) * 360;
+    const rad = (angle * Math.PI) / 180;
+    const x = 50 + Math.cos(rad) * 50;
+    const y = 50 + Math.sin(rad) * 50;
+    const bulb = document.createElement('div');
+    bulb.className = 'spin-bulb';
+    bulb.style.left = `calc(${x}% - 5px)`;
+    bulb.style.top = `calc(${y}% - 5px)`;
+    bulb.style.animationDelay = (i * 0.08) + 's';
+    bulbs.appendChild(bulb);
+  }
+}
+
+function buildSpinWheel() {
+  const wheel = $('spinWheel'); if (!wheel) return;
+  wheel.innerHTML = '';
+  const total = SPIN_REWARDS.length;
+  const segAngle = 360 / total;
+  SPIN_REWARDS.forEach((r, i) => {
+    const seg = document.createElement('div');
+    seg.className = 'spin-segment';
+    seg.style.transform = `rotate(${i * segAngle}deg)`;
+    const inner = document.createElement('div');
+    inner.className = 'spin-segment-inner';
+    inner.style.background = `radial-gradient(circle at 100% 50%, ${r.color}dd, ${r.color})`;
+    const text = document.createElement('div');
+    text.className = 'spin-segment-text';
+    text.innerHTML = `<span class="spin-amt-symbol">৳</span><span class="spin-amt">${r.amt}</span>`;
+    inner.appendChild(text);
+    seg.appendChild(inner);
+    wheel.appendChild(seg);
+  });
+  buildSpinBulbs();
+}
+
+let isSpinning = false;
+let currentRotation = 0;
+
+$('spinBtn').addEventListener('click', async () => {
+  if (!currentPhone) return openLoginModal();
+  if (isSpinning) return;
+  const tickets = userData.spinTickets || 0;
+  if (tickets <= 0) {
+    $('spinStatusBox').classList.add('error');
+    $('spinStatus').textContent = 'NO SPINS! DEPOSIT OR REFER TO EARN.';
+    return showInfo('NO SPINS AVAILABLE', `<div style="line-height:1.8;">YOU HAVE <b style="color:var(--primary);">0 SPINS</b>.<br><br>EARN FREE SPINS BY:<br>💰 <b>+1 SPIN</b> PER DEPOSIT<br>🎁 <b>+1 SPIN</b> PER REFERRAL</div>`, '🎫', 'background:linear-gradient(135deg,#fee2e2,#fecaca);color:#dc2626;');
+  }
+  isSpinning = true;
+  $('spinBtn').disabled = true;
+  $('spinStatus').textContent = 'SPINNING...';
+  $('spinStatusBox').classList.remove('success', 'error');
+  const wheel = $('spinWheel');
+  const total = SPIN_REWARDS.length;
+  const segAngle = 360 / total;
+  const totalWeight = SPIN_WEIGHTS.reduce((a, b) => a + b, 0);
+  let rand = Math.random() * totalWeight;
+  let idx = 0;
+  for (let i = 0; i < SPIN_WEIGHTS.length; i++) { rand -= SPIN_WEIGHTS[i]; if (rand <= 0) { idx = i; break; } }
+  const reward = SPIN_REWARDS[idx].amt;
+  const winnerCenter = idx * segAngle + segAngle / 2;
+  const targetAngle = 360 * 6 + (360 - winnerCenter);
+  currentRotation += targetAngle;
+  wheel.style.transform = `rotate(${currentRotation}deg)`;
+  setTimeout(async () => {
+    try {
+      const winKey = push(ref(db, `users/${currentPhone}/spinHistory`)).key;
+      await update(ref(db), {
+        [`users/${currentPhone}/balance`]: (userData.balance || 0) + reward,
+        [`users/${currentPhone}/spinTickets`]: tickets - 1,
+        [`users/${currentPhone}/spinHistory/${winKey}`]: { amount: reward, timestamp: Date.now() }
+      });
+      $('winAmount').textContent = reward;
+      $('winPopup').classList.add('active');
+      $('spinStatus').textContent = `🎉 YOU WON ৳${reward}!`;
+      $('spinStatusBox').classList.add('success');
+    } catch (e) { toast('Failed: ' + e.message, 'error'); }
+    finally { isSpinning = false; }
+  }, 5000);
+});
+
+$('winPopupClose').addEventListener('click', () => { $('winPopup').classList.remove('active'); });
+
+function updateSpinStatus() {
+  const ticketEl = $('spinTicketsCount');
+  if (ticketEl) ticketEl.textContent = userData?.spinTickets || 0;
+  if (!currentPhone) {
+    const s = $('spinStatus'); if (s) s.textContent = 'LOGIN TO SPIN!';
+    const btn = $('spinBtn'); if (btn) btn.disabled = false;
+    renderWinHistory();
+    return;
+  }
+  const tickets = userData.spinTickets || 0;
+  const box = $('spinStatusBox'), s = $('spinStatus'), btn = $('spinBtn');
+  if (!box || !s || !btn) return;
+  if (tickets > 0) {
+    s.textContent = `YOU HAVE ${tickets} SPIN${tickets > 1 ? 'S' : ''} AVAILABLE!`;
+    box.classList.remove('success', 'error');
+    btn.disabled = false;
+  } else {
+    s.textContent = 'DEPOSIT OR REFER TO EARN SPINS!';
+    box.classList.remove('success');
+    box.classList.add('error');
+    btn.disabled = true;
+  }
+  renderWinHistory();
+}
+
+function renderWinHistory() {
+  const box = $('winHistory'); if (!box) return;
+  if (!currentPhone || !userData.spinHistory) {
+    box.innerHTML = `<div class="deposit-empty"><div class="deposit-empty-icon">🎰</div><div class="deposit-empty-title">NO WINS YET</div><div class="deposit-empty-sub">SPIN THE WHEEL TO WIN CASH!</div></div>`;
+    return;
+  }
+  const history = Object.values(userData.spinHistory).sort((a, b) => b.timestamp - a.timestamp).slice(0, 10);
+  if (!history.length) {
+    box.innerHTML = `<div class="deposit-empty"><div class="deposit-empty-icon">🎰</div><div class="deposit-empty-title">NO WINS YET</div><div class="deposit-empty-sub">SPIN THE WHEEL TO WIN CASH!</div></div>`;
+    return;
+  }
+  box.innerHTML = history.map(h => {
+    const dateStr = new Date(h.timestamp).toLocaleString('en-BD', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+    return `<div class="win-history-card"><div class="win-history-icon">🏆</div><div class="win-history-body"><div class="win-history-amount">৳ ${fmt(h.amount)}</div><div class="win-history-date">${dateStr}</div></div></div>`;
+  }).join('');
+}
+
+function renderMissions() {
+  const list = $('missionsList'); if (!list) return;
+  const missions = [
+    { id: 'deposit1', title: 'FIRST DEPOSIT', sub: 'MAKE YOUR FIRST DEPOSIT', reward: 10 },
+    { id: 'referral1', title: 'REFER A FRIEND', sub: 'INVITE 1 FRIEND', reward: 200 },
+    { id: 'purchase1', title: 'BUY A PACKAGE', sub: 'PURCHASE ANY PACKAGE', reward: 5 },
+    { id: 'daily1', title: 'DAILY LOGIN', sub: 'LOGIN TODAY', reward: 2 },
+  ];
+  list.innerHTML = missions.map(m => `<div class="mission-item"><div class="m-check ${userData.missions?.[m.id] ? 'done' : ''}">${userData.missions?.[m.id] ? '✓' : ''}</div><div class="m-info"><h4>${m.title}</h4><p>${m.sub}</p></div><span class="m-reward">৳${m.reward}</span></div>`).join('');
+}
+
+$('checkinBtn').addEventListener('click', async () => {
+  if (!currentPhone) return openLoginModal();
+  const today = new Date().toISOString().split('T')[0];
+  if (userData.lastCheckin === today) return toast('Already checked in', 'error');
+  await update(ref(db, 'users/' + currentPhone), { lastCheckin: today, balance: (userData.balance || 0) + 5, checkinStreak: (userData.checkinStreak || 0) + 1 });
+  toast('✅ +৳5 bonus!', 'success');
+  renderWeeklyCheckin();
+});
+
+function renderWeeklyCheckin() {
+  const grid = $('weeklyCheckinGrid'); if (!grid) return;
+  const days = ['D1','D2','D3','D4','D5','D6','D7'];
+  const streak = userData?.checkinStreak || 0;
+  grid.innerHTML = days.map((d, i) => `<div class="checkin-day ${i < streak ? 'claimed' : ''}">${d}</div>`).join('');
+}
+
+async function loadLeaderboard() {
+  const box = $('leaderboardList'); if (!box) return;
+  const snap = await get(ref(db, 'users'));
+  if (!snap.exists()) { box.innerHTML = '<div class="empty">NO USERS</div>'; return; }
+  const arr = []; snap.forEach(c => { const u = c.val(); if (u.role !== 'admin') arr.push(u); });
+  arr.sort((a, b) => (b.balance || 0) - (a.balance || 0));
+  box.innerHTML = arr.slice(0, 10).map((u, i) => {
+    const rc = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+    return `<div class="leaderboard-item"><div class="rank ${rc}">${i + 1}</div><div class="lb-info"><div class="lb-name">${u.name || 'USER'}</div><div class="lb-amount">BALANCE: ৳${fmt(u.balance)}</div></div></div>`;
+  }).join('');
+}
+
+function renderNews() {
+  const list = $('newsList'); if (!list) return;
+  const news = [
+    { i: '🎉', t: 'WELCOME TO WINGOBD V2.0', d: 'NEW FEATURES: SPIN WHEEL, DAILY BONUS, LEADERBOARD!' },
+    { i: '🎫', t: 'FREE SPINS AVAILABLE', d: 'GET +1 SPIN PER DEPOSIT AND PER REFERRAL!' },
+    { i: '💰', t: 'REFERRAL BONUS INCREASED', d: 'NOW EARN ৳200 + 1 SPIN PER SUCCESSFUL REFERRAL!' },
+    { i: '🎰', t: 'SPIN WHEEL LAUNCHED', d: 'WIN ৳20 - ৳150!' },
+    { i: '📢', t: 'DAILY BONUS LIVE', d: 'CLAIM FREE ৳5 EVERY DAY.' },
+  ];
+  list.innerHTML = news.map(n => `<div class="news-item"><div class="news-icon">${n.i}</div><div class="news-text"><h4>${n.t}</h4><p>${n.d}</p></div></div>`).join('');
+}
+
+loadPackages(); loadNagadNumber(); renderNews(); renderMissions(); renderDailyCheckin(); renderWeeklyCheckin(); loadLeaderboard(); buildSpinWheel();
+
+const savedPhone = localStorage.getItem('wingobd_phone') || sessionStorage.getItem('wingobd_phone');
+if (savedPhone) {
+  get(ref(db, 'users/' + savedPhone)).then(s => {
+    if (s.exists()) {
+      const ud = s.val();
+      if (ud.isBanned === true) { showBannedScreen(); return; }
+      currentPhone = savedPhone; localStorage.setItem('wingobd_phone', savedPhone);
+      loadUser(savedPhone);
+    } else { localStorage.removeItem('wingobd_phone'); sessionStorage.removeItem('wingobd_phone'); }
+  }).catch(() => {});
+}
+</script>
+</body>
+</html>
